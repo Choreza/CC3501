@@ -40,7 +40,7 @@ class Mountain:
         dbx += self.__scale_x(800)
         for i in range(dax, dbx):
             x = i - dax
-            h = int(x * (float(1500 + 200 * self._digits)/800)) + last_peak
+            h = int(x * (float(1500 + 200 * self._digits - last_peak)/800)) + last_peak
             self._mountain_border.append(self.__inverse_y(h))
             if i == dbx - 1:
                 last_peak = h

@@ -2,6 +2,7 @@ import numpy as np
 import tqdm
 import matplotlib.pyplot as plt
 
+
 class Mountain:
     def __init__(self, height, width, dh, digits):
         self._digits = float(digits)/1000
@@ -80,21 +81,21 @@ class Mountain:
     def __inverse_y(self, y):
         return self._h - 1 - y
 
-    def start(self):
-        for _ in tqdm.tqdm(range(1)):
-            for x in range(self._w):
-                for y in range(self._h):
-                    if self._mountain_border[x] <= y:
-                        self._matrix[y][x] = np.nan
+    def base_case(self, t):
+        for x in range(self._w):
+            for y in range(self._h):
+                if self._mountain_border[x] <= y:
+                    self._matrix[y][x] = np.nan
+            
 
     def plot(self):
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        cax = ax.imshow(self._matrix, interpolation = 'none')
+        cax = ax.imshow(self._matrix, interpolation='none')
         plt.colorbar(cax)
         plt.show()
 
 
 m = Mountain(2000,  4000, 1, 991)
-m.start()
+m.base_case(10)
 m.plot()

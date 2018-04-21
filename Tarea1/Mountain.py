@@ -93,18 +93,15 @@ class Mountain:
 
         # Inicializa la temperatura del borde de la montana
         for y in range(self._h):
-            for x in range(self._w):
-
-                # Si y esta bajo el borde, se detiene
-                if y > self._m_border[x]:
-                    break
-                
-                y_m1 = np.isnan(self._matrix[min(y+1, self._h-1)][x])
-                x_m1 = np.isnan(self._matrix[y][x-1])
-                x_p2 = np.isnan(self._matrix[y][min(self._w-1,x+1)])
+            for x in range(self._w):                
+                y_m1 = np.isnan(self._matrix[max(y-1, 0)][x])       
+                y_p1 = np.isnan(self._matrix[min(y+1, self._h-1)][x])
+    
+                x_m1 = np.isnan(self._matrix[y][max(0,x-1)])
+                x_p1 = np.isnan(self._matrix[y][min(self._w-1,x+1)])
 
                 # Se verifica que, este en el borde, o que algun vecino sea NaN
-                if y <= self._m_border[x] and (y_m1 or x_m1 or x_p2):
+                if y <= self._m_border[x] and (x_m1 or x_p1 or y_m1 or y_p1):
                     h = self._dh*(self._h-1-y)
                     self._matrix[y][x] = self._temp.get_cont(h)
 

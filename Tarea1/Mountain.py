@@ -61,6 +61,10 @@ class Mountain:
         for x in range(0, self._w-self.__scl_x(xa)):
             self._m_border.append(self.__inv_y(m*x+self.__scl_x(c)))
 
+        while len(self._m_border) < self._w:
+            self._m_border.append(self._m_border[len(self._m_border)-1])
+        
+
     def __scl_x(self, x):
         return int(float(x)/self._dh)
 
@@ -87,12 +91,12 @@ class Mountain:
 
         # Rellena con NaN el interior de la montana
         for x in range(self._w):
-            # Itera por bajo el borde solamente
-            for y in range(int(self._m_border[x])+1, self._h):
-                self._matrix[y][x] = np.nan
+            for y in range(self._h):
+                if y >= self._m_border[x]:
+                    self._matrix[y][x] = np.nan
 
         # Inicializa la temperatura del borde de la montana
-        for y in range(self._h):
+        for y in range(self._h-1):
             for x in range(self._w):                
                 y_m1 = np.isnan(self._matrix[max(y-1, 0)][x])       
                 y_p1 = np.isnan(self._matrix[min(y+1, self._h-1)][x])
@@ -105,6 +109,7 @@ class Mountain:
                     h = self._dh*(self._h-1-y)
                     self._matrix[y][x] = self._temp.get_cont(h)
 
+
         # Inicializa la temperatura de la planta
         for x in range(self._w):
 
@@ -114,6 +119,7 @@ class Mountain:
             
             # Si la altura es la de la planta, la calcula
             if self._m_border[x] == self._h-1:
+                self._matrix[self._h-2][x] = self._temp.get_atm(self.__inv_y(y)*self._dh)
                 self._matrix[self._h-1][x] = self._temp.get_plant()
 
     def reset(self):
@@ -174,5 +180,5 @@ class Mountain:
 
 
 m = Mountain(2000,  4000, 10, 991)
-m.base_case(0)
+m.base_case(9)
 m.plot()

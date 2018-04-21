@@ -13,10 +13,10 @@ class Temperature:
 	def get_sea(self):
 		if self._time < 8:
 			return 4
-		if 8 <= self._time < 16:
-			return self._time*float(16)/8 + 4
+		elif 8 <= self._time < 16:
+			return (self._time-8)*2 + 4
 		else:
-			return -self._time*float(16)/8 + 20
+			return -(self._time-16)*2 + 20
 
 	def get_plant(self):
 		return 400*(2 + np.cos(self._time*np.pi/float(12)))

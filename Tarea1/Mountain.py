@@ -1,7 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import tqdm 
+import os
 from Temperature import Temperature
+import math
 
 class Mountain:
     def __init__(self, height, width, dh, tol, digits):
@@ -122,6 +124,9 @@ class Mountain:
                         prom = 0.25*(old_mat[y+1][x] + old_mat[y][x+1] + old_mat[y-1][x] + 
                                  old_mat[y][x-1] - 4*old_mat[y][x] - self.__rho(x,y)*self._h**2)
 
+
+                    # Condiciones de Neumann para bordes de la montana
+
                     # Solamente valor inferior es NaN
                     elif np.isnan(old_mat[y+1][x]) and not(np.isnan(old_mat[y][x+1])) and not(np.isnan(old_mat[y][x-1])):
                         prom = 0.25*(2*old_mat[y-1][x]+old_mat[y][x-1]+old_mat[y][x+1] - 4*old_mat[y][x] - self.__rho(x,y)*self._h**2)
@@ -177,6 +182,7 @@ class Mountain:
                     prom = 0.25*(2*old_mat[y+1][x] - 4*old_mat[y][x] - self.__rho(x,y)*self._h**2 +
                             2*old_mat[y][x-1])
 
+                # Si y esta en el borde inferior, se ignora (cond Dirichlet)
                 else:
                     continue
 
@@ -186,6 +192,7 @@ class Mountain:
 
 
     def start(self, omega):
+        self.omega = omega
 
         # Matriz que guarda los nuevos valores de la iteracion
         new_mat = np.copy(self._matrix)
@@ -200,7 +207,7 @@ class Mountain:
             raise Exception("Omega tiene un valor incorrecto")
 
         # Se fija un numero de iteraciones
-        max_iters = 5000
+        max_iters = 0
         while run and n_iters < max_iters:
 
             # Se actualiza la matriz vieja, para calcular la nueva
@@ -280,14 +287,54 @@ class Mountain:
         
     def plot(self):
         fig = plt.figure()
+        fig.add_axes()
+        
         ax = fig.add_subplot(111)
-        cax = ax.imshow(self._matrix, interpolation='none')
-        plt.colorbar(cax)
-        plt.show()
+        has_rho = ""
+        if self.laplace:
+            has_rho += "l"
+        else:
+            has_rho += "p"
 
+        ax.set_title('Temperatura Terreno (t = '+str(self._last_t)+")")
+        ax.set_xlabel("Perfil Horizontal [m]")
+        ax.set_ylabel("Altura desde Nivel del Mar [m]")
+
+        # Experimental: se modifican las etiquetas de los ejes
+        xnum = 8
+        ynum = 6
+        xlabel = []
+        ylabel = []
+        for i in range(xnum): xlabel.append(str(int(float(4000) * i / (xnum))))
+        for j in range(ynum): ylabel.append(str(int(float(2000) * j / (ynum - 1))))
+        ylabel.reverse()
+        ax.set_xticklabels([''] + xlabel)
+        ax.set_yticklabels([''] + ylabel)
+     
+
+        cax = ax.imshow(self._matrix, interpolation='none')
+
+        cbar = plt.colorbar(cax)
+        cbar.ax.set_ylabel("Temperatura [°Celsius]")
+        
+        fig.savefig('figures/t'+str(self._last_t)+'-w'+str(self.omega)[0:3]+'.png')
+        plt.close(fig)
 
 
 m = Mountain(2000, 4000, 20, 0.001, 991)
+t = [0, 8, 12, 16, 20]
+omegas = [1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
+
+n_iters = []
+times = []
+
+"""
+for i in range(len(t)):
+    m.base_case(t)
+    m.start(m.w_optimo)
+    m.plot
+"""
+
 m.base_case(16)
 m.start(m.w_optimo())
 print(m.w_optimo())

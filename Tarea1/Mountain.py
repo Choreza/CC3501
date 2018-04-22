@@ -42,7 +42,7 @@ class Mountain:
         xb = xa+280
         m = float(100)/300
         for x in range(0, self.__scl_x(xb-xa)):
-            self._m_border.append(self.__inv_y(m*x))
+            self._m_border.append(min(self._h-1, self.__inv_y(m*x)))
 
         # Cuarto tramo: primera gran inclinacion ascendente
         c = m*(xb-xa)
@@ -50,7 +50,7 @@ class Mountain:
         xb = xa+800
         m = (1500+200*self._d-c)/800
         for x in range(0, self.__scl_x(xb-xa)):
-            self._m_border.append(self.__inv_y(m*x+self.__scl_x(c)))
+            self._m_border.append(min(self._m_border[len(self._m_border)-1], self.__inv_y(m*x+self.__scl_x(c))))
 
         # Quinto tramo: primera inclinacion desdendente
         c = m*(xb-xa)+c
@@ -114,7 +114,7 @@ class Mountain:
                     continue
     
                 prom = 0
-                # Posicion actual no toca los bordes, incluyendo los bordes de la montana y el mar
+                # Posicion actual no corresponda a los bordes izquierdo o derecho
                 if 0 < x < self._w-1 and 0 < y < self._h-1:
                     
                     # Caso en que no esta rodeado de NaN
@@ -154,7 +154,7 @@ class Mountain:
                         old_mat[y-1][x]- self.__rho(x,y)*self._h**2)
 
                 # Borde derecho
-                elif x == self._w-1 and 0 < y <= self._m_border[x]:
+                elif x == self._w-1 and 0 < y < self._h-1:
                     if not(self.near_nan(x, y)):
                         prom = 0.25*(old_mat[y+1][x] + 2*old_mat[y][x-1] - 4*old_mat[y][x] +
                                 old_mat[y-1][x]- self.__rho(x,y)*self._h**2)
@@ -200,7 +200,7 @@ class Mountain:
             raise Exception("Omega tiene un valor incorrecto")
 
         # Se fija un numero de iteraciones
-        max_iters = 1500
+        max_iters = 5000
         while run and n_iters < max_iters:
 
             # Se actualiza la matriz vieja, para calcular la nueva
@@ -239,7 +239,8 @@ class Mountain:
         # Inicializa la temperatura del borde de la montana
         for x in range(self._w):
             for y in range(self._h):                
-                
+                if np.isnan(self._matrix[y][x]):
+                    continue
                 # Se verifica que, este en el borde, o que algun vecino sea NaN
                 if y <= self._m_border[x] and self.near_nan(x, y):
                     h = self._dh*(self._h-1-y)
@@ -286,7 +287,7 @@ class Mountain:
 
 
 
-m = Mountain(2000,  4000, 10, 0.001, 991)
+m = Mountain(2000, 4000, 20, 0.001, 991)
 m.base_case(16)
 m.start(m.w_optimo())
 print(m.w_optimo())

@@ -1,7 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import tqdm 
-import os
 from Temperature import Temperature
 import math
 
@@ -191,7 +189,7 @@ class Mountain:
         return max_prom
 
 
-    def start(self, omega):
+    def start(self, omega, max_iters):
         self.omega = omega
 
         # Matriz que guarda los nuevos valores de la iteracion
@@ -207,7 +205,6 @@ class Mountain:
             raise Exception("Omega tiene un valor incorrecto")
 
         # Se fija un numero de iteraciones
-        max_iters = 0
         while run and n_iters < max_iters:
 
             # Se actualiza la matriz vieja, para calcular la nueva
@@ -268,11 +265,19 @@ class Mountain:
                 self._matrix[self._h-1][x] = self._temp.get_plant()
 
 
-    def reset(self):
-        self._matrix = np.zeros((self._h, self._w))
-        self.base_case(self._last_t)
+    def mean_temp(self):
+        count = 0
+        mean = 0
+        for x in range(50, 125):
+            for y in range(60, self._h):
+                if np.isnan(self._matrix[y][x]):
+                    continue
+                mean += self._matrix[y][x]
+                count += 1
+        
+        mean = float(mean)/count
+        return mean
 
-   
     def __rho(self, x, y):
         if self.laplace:
             return 0
@@ -296,7 +301,7 @@ class Mountain:
         else:
             has_rho += "p"
 
-        ax.set_title('Temperatura Terreno (t = '+str(self._last_t)+")")
+        ax.set_title('Temperatura Terreno (t = '+str(self._last_t)+", w="+str(self.omega)[0:3]+")")
         ax.set_xlabel("Perfil Horizontal [m]")
         ax.set_ylabel("Altura desde Nivel del Mar [m]")
 
@@ -319,23 +324,3 @@ class Mountain:
         
         fig.savefig('figures/t'+str(self._last_t)+'-w'+str(self.omega)[0:3]+'.png')
         plt.close(fig)
-
-
-m = Mountain(2000, 4000, 20, 0.001, 991)
-t = [0, 8, 12, 16, 20]
-omegas = [1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
-
-n_iters = []
-times = []
-
-"""
-for i in range(len(t)):
-    m.base_case(t)
-    m.start(m.w_optimo)
-    m.plot
-"""
-
-m.base_case(16)
-m.start(m.w_optimo())
-print(m.w_optimo())
-m.plot()

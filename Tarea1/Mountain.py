@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt
 from Temperature import Temperature
@@ -21,7 +23,10 @@ class Mountain:
         self.laplace = True
 
     def __get_border(self):
-
+        """
+        Genera lista con el borde de la montana
+        :return:
+        """
         # Lista que, dado un x guarda el y del borde de la montana
         self._m_border = []
         
@@ -82,9 +87,17 @@ class Mountain:
         
 
     def __scl_x(self, x):
+        """
+        Retorna el valor x escalado
+        :return:
+        """
         return int(float(x)/self._dh)
 
     def __scl_y(self, y):
+        """
+        Retorna el valor y escalado
+        :return:
+        """
         return int(float(y)/self._dh)
 
     def __inv_y(self, y):
@@ -92,6 +105,10 @@ class Mountain:
 
 
     def near_nan(self, x, y):
+        """
+        True si un vecino es NaN
+        :return:
+        """
         if np.isnan(self._matrix[max(y-1, 0)][x]):
             return True    
         if np.isnan(self._matrix[min(y+1, self._h-1)][x]):
@@ -104,7 +121,11 @@ class Mountain:
 
 
     def __single_iteration(self, old_mat, new_mat, omega):
-        
+        """
+        Realiza una iteracion dada la matriz antigua, la nueva y un omega
+        :return:
+        """
+
         # Valor maximo de rij 
         max_prom = 0
         for x in range(self._w):
@@ -222,6 +243,11 @@ class Mountain:
         return n_iters
 
     def base_case(self, t):
+        """
+        Inicializa la matriz segun el caso base
+        :return:
+        """
+
         # Guarda el ultimo caso base
         self._last_t = t
         self._temp = Temperature(t)
@@ -264,8 +290,12 @@ class Mountain:
                 self._matrix[self._h-2][x] = self._temp.get_atm(self.__inv_y(y)*self._dh)
                 self._matrix[self._h-1][x] = self._temp.get_plant()
 
-
+        
     def mean_temp(self):
+        """
+        Calcula la temperatura promedio para valores que no son NaN
+        :return:
+        """
         count = 0
         mean = 0
         for x in range(50, 125):
@@ -279,9 +309,13 @@ class Mountain:
         return mean
 
     def __rho(self, x, y):
+        """
+        Retorna 0 si es ecuacion de Laplace, rho si es de Poisson
+        :return:
+        """
         if self.laplace:
             return 0
-        return 1.0/(x**2 + y**2 + 120)**0.5
+        return 1.0/((x**2 + y**2 + 120)**0.5)
 
     def w_optimo(self):
         """
@@ -291,6 +325,10 @@ class Mountain:
         return 4/(2+(np.sqrt(4-(np.cos(np.pi/(self._w-1)) + np.cos(np.pi/(self._h-1)))**2)))
         
     def plot(self):
+        """
+        Grafica la matriz
+        :return:
+        """
         fig = plt.figure()
         fig.add_axes()
         
@@ -301,17 +339,20 @@ class Mountain:
         else:
             has_rho += "p"
 
-        ax.set_title('Temperatura Terreno (t = '+str(self._last_t)+", w="+str(self.omega)[0:3]+")")
+        # Se agrega titulo, y labels
+        ax.set_title('Temperatura Terreno (t = '+str(self._last_t)+", w="+(str(self.omega)+"0000")[0:3]+")")
         ax.set_xlabel("Perfil Horizontal [m]")
         ax.set_ylabel("Altura desde Nivel del Mar [m]")
 
-        # Experimental: se modifican las etiquetas de los ejes
+        # Se modifican etiquetas de los ejes
         xnum = 8
         ynum = 6
         xlabel = []
         ylabel = []
-        for i in range(xnum): xlabel.append(str(int(float(4000) * i / (xnum))))
-        for j in range(ynum): ylabel.append(str(int(float(2000) * j / (ynum - 1))))
+        for i in range(xnum): 
+            xlabel.append(str(int(float(4000) * i / (xnum))))
+        for j in range(ynum): 
+            ylabel.append(str(int(float(2000) * j / (ynum - 1))))
         ylabel.reverse()
         ax.set_xticklabels([''] + xlabel)
         ax.set_yticklabels([''] + ylabel)
@@ -322,5 +363,6 @@ class Mountain:
         cbar = plt.colorbar(cax)
         cbar.ax.set_ylabel("Temperatura [°Celsius]")
         
-        fig.savefig('figures/t'+str(self._last_t)+'-w'+str(self.omega)[0:3]+'.png')
+        # Se guarda la figura en la carpeta de figuras
+        fig.savefig('figures/t'+str(self._last_t)+'-w'+(str(self.omega)+"0000")[0:3]+'.png')
         plt.close(fig)

@@ -29,13 +29,13 @@ def main():
     alto = 650
     init(ancho, alto, "Ejemplo Aux")
     vista = Vista()
+    clock = pygame.time.Clock()
 
     pjs = []
     walls = Grid(13, 15)
-    bomberman = Bomberman(walls, Vector(50, 50))
+    bomberman = Bomberman(walls, clock, Vector(50, 50))
     pjs.append(walls)
     pjs.append(bomberman)
-
     run = True
     while run:
 
@@ -43,23 +43,20 @@ def main():
             if event.type == QUIT:  # cerrar ventana
                 run = False
 
-            if event.type == KEYDOWN:
-                if event.key == K_SPACE:
-                    pass
-                if event.key == K_RIGHT:
-                    bomberman.move(50, 0)
-                if event.key == K_LEFT:
-                    bomberman.move(-50, 0)
-                if event.key == K_UP:
-                    bomberman.move(0, 50)
-                if event.key == K_DOWN:
-                    bomberman.move(0, -50)
-
+        keys = pygame.key.get_pressed()
+        if keys[K_RIGHT]:
+            bomberman.move(Vector(50, 0))
+        if keys[K_LEFT]:
+            bomberman.move(Vector(-50, 0))
+        if keys[K_UP]:
+            bomberman.move(Vector(0, 50))
+        if keys[K_DOWN]:
+            bomberman.move(Vector(0, -50))
+        if keys[K_SPACE]:
+            bomberman.put_bomb(pjs)
         vista.dibujar(pjs)
-
-    
         pygame.display.flip()  # actualizar pantalla
-        pygame.time.wait(int(1000 / 30))  # ajusta a 30 fps
+        clock.tick(int(1000/30))  # ajusta a 30 fps
 
     pygame.quit()
 

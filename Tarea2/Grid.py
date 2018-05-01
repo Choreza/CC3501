@@ -12,6 +12,12 @@ class Grid(Figura):
 				if (i % 2 == 1 and j % 2 == 1) or (i % 2 != j % 2):
 					self._matrix[i][j] = 0
 
+	def set_pos(self, vec, val):
+		x = int(vec.x/50)
+		y = int(vec.y/50)
+
+		self._matrix[x][y] = val
+
 	def get_matrix(self):
 		return self._matrix
 

@@ -1,7 +1,9 @@
 from CC3501Utils import *
+from coordinate import Coordinate
 
 class Grid(Figura):
 	def __init__(self, col, row, pos=Vector(0, 0), rgb=(1.0, 1.0, 1.0)):
+		self.coord = []
 		self.__init_matrix(col, row)
 		super().__init__(pos, rgb)
 
@@ -15,11 +17,7 @@ class Grid(Figura):
 	def set_pos(self, vec, val):
 		x = int(vec.x/50)
 		y = int(vec.y/50)
-
 		self._matrix[x][y] = val
-
-	def get_matrix(self):
-		return self._matrix
 
 	def figura(self):
 		mat = self._matrix
@@ -30,8 +28,10 @@ class Grid(Figura):
 		for i in range(len(mat)):
 			for j in range(len(mat[0])):
 				if mat[i][j]:
-					glVertex2f(50*i, 50*j)
-					glVertex2f(50*i + 50, 50*j)
-					glVertex2f(50*i + 50, 50*j + 50)
-					glVertex2f(50*i, 50*j + 50)
+					glVertex2f(50 * i, 50 * j)
+					glVertex2f(50 * i + 50, 50 * j)
+					glVertex2f(50 * i + 50, 50 * j + 50)
+					glVertex2f(50 * i, 50 * j + 50)
+
+					self.coord.append(Coordinate(Vector(50 * i, 50 * j), Vector(50 * i + 50, 50 * j + 50)))
 		glEnd()

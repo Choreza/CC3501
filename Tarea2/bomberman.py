@@ -2,6 +2,7 @@ from CC3501Utils import *
 from bomb import Bomb
 from coordinate import Coordinate
 from fire import Fire
+from powerup import PowerUp
 
 class Bomberman(Figura):
 	def __init__(self, pjs, pos=Vector(0, 0), rgb=(1.0, 1.0, 1.0)):
@@ -9,6 +10,8 @@ class Bomberman(Figura):
 		self.pjs = pjs
 		
 		self.bombs = 5
+		self.speed = 12.5
+		self.bombradius = 2
 
 		self.coord = []
 		self.coord.append(Coordinate(pos, pos + Vector(50, 50)))
@@ -23,17 +26,22 @@ class Bomberman(Figura):
 
 	def move(self, direction):
 		s = self
-		direction *= 12.5
+		direction *= s.speed
 		for pj in s.pjs:
+			
 			if type(pj) == Bomb:
 				if pj == s.pjs[len(s.pjs)-1] and s.coord[0].overlap(pj.coord[0]):
 					break
+			
+			if type(pj) == PowerUp:
+				if pj.coord[0].overlap(s.coord[0]):
+					s.eat(pj)
+
 			if type(pj) != Bomberman and type(pj) != Fire:
 				for c in pj.coord:
 					if (s.coord[0] + direction).overlap(c):	
 						return
 			
-
 		self.pos += direction
 		self.coord[0].move(direction)
 
@@ -53,4 +61,19 @@ class Bomberman(Figura):
 		else:
 			return
 		
-		s.pjs.append(Bomb(s.pjs, Vector(x, y)))
+		s.pjs.append(Bomb(s.pjs, s.bombradius, Vector(x, y)))
+
+	def eat(self, powerup):
+		s = self
+		p = powerup
+
+		s.pjs.remove(p)
+
+		if p.posibilities[p.power] == 'bomb':
+			s.bombs += 1
+
+		if p.posibilities[p.power] == 'speed':
+			s.speed *= 2
+
+		if p.posibilities[p.power] == 'radius':
+			s.bombradius += 1

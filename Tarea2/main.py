@@ -1,13 +1,3 @@
-#####################################################################
-# Mauricio Araneda H.
-# CC3501
-#####################################################################
-
-# Ejemplo.py
-# ---------------
-# Ejemplo para aux
-# ---------------
-
 # Implementación testeada con:
 ## Python 3.5
 ## PyOpenGL 3.1.0
@@ -19,7 +9,7 @@ from CC3501Utils import *
 from grid import Grid
 from vista import *
 from bomberman import Bomberman
-#from pickle import *
+from destructiveblock import DestructiveBlock
 #####################################################################
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'  # centrar pantalla
@@ -34,8 +24,13 @@ def main():
     pjs = []
     walls = Grid(13, 15)
     bomberman = Bomberman(pjs, Vector(50, 50))
+    destructiveblocks = 40
+
     pjs.append(walls)
     pjs.append(bomberman)
+    for i in range(destructiveblocks):
+        pjs.append(DestructiveBlock(pjs))
+
     
     run = True
     while run:

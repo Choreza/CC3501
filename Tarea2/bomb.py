@@ -5,7 +5,7 @@ from fire import Fire
 import numpy as np
 
 class Bomb(Figura):
-	def __init__(self, pjs, pos=Vector(0, 0), rgb=(1.0, 1.0, 1.0)):
+	def __init__(self, pjs, radius, pos=Vector(0, 0), rgb=(1.0, 1.0, 1.0)):
 		super().__init__(pos, rgb)
 		self.pjs = pjs
 		
@@ -13,7 +13,7 @@ class Bomb(Figura):
 		self.coord.append(Coordinate(pos, pos + Vector(50, 50)))
 
 		self.start = datetime.now()
-		self.radius = 5
+		self.radius = radius
 
 	def lifetime(self):
 		now = datetime.now()

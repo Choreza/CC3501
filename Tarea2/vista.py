@@ -2,7 +2,8 @@ from OpenGL.GL import *
 from CC3501Utils import *
 from bomb import Bomb
 from fire import Fire
-
+from bomberman import Bomberman
+from destructiveblock import DestructiveBlock
 
 class Vista:
 	def dibujar(self, pjs):
@@ -18,6 +19,11 @@ class Vista:
 					p.dibujar()
 
 		for p in pjs:
+			if type(p) == DestructiveBlock:
+				if p.fire != None and not(p.fire in pjs):
+					pjs.remove(p)
+
+		for p in pjs:
 			if type(p) == Bomb:
 				if p.lifetime() > 3:
 					p.explode()
@@ -25,5 +31,11 @@ class Vista:
 					p.dibujar()
 
 		for p in pjs:
-			if type(p) != Bomb and type(p) != Fire:
+			if type(p) != Bomb and type(p) != Fire and type(p) != Bomberman:
 				p.dibujar()
+
+			if type(p) == Bomberman:
+				if p.killer != None:
+					pjs.remove(p)
+				else:
+					p.dibujar()

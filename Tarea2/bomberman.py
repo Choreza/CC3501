@@ -3,12 +3,14 @@ from bomb import Bomb
 from coordinate import Coordinate
 from fire import Fire
 from powerup import PowerUp
+from destructiveblock import DestructiveBlock
 
 class Bomberman(Figura):
 	def __init__(self, pjs, pos=Vector(0, 0), rgb=(1.0, 1.0, 1.0)):
 		super().__init__(pos, rgb)
 		self.pjs = pjs
-		
+
+		self.killer = None
 		self.bombs = 5
 		self.speed = 12.5
 		self.bombradius = 2
@@ -36,6 +38,11 @@ class Bomberman(Figura):
 			if type(pj) == PowerUp:
 				if pj.coord[0].overlap(s.coord[0]):
 					s.eat(pj)
+
+			if type(pj) == Fire:
+				for coord in pj.coord:
+					if coord.overlap(s.coord[0]):
+						s.die(pj)
 
 			if type(pj) != Bomberman and type(pj) != Fire:
 				for c in pj.coord:
@@ -77,3 +84,28 @@ class Bomberman(Figura):
 
 		if p.posibilities[p.power] == 'radius':
 			s.bombradius += 1
+
+	def die(self, pj):
+		self.killer = pj
+
+	def clear_radius(self, radius):
+		s = self
+
+		i = -radius*50
+		j = -radius*50
+
+		while i < radius*50:
+			while j < radius*50:
+				acoord = Coordinate(s.pos+Vector(i, j), s.pos+Vector(i+50, j+50))
+				for pj in s.pjs:
+					if type(pj) != DestructiveBlock:
+						continue
+					for coord in pj.coord:
+						if acoord.overlap(coord):
+							print(coord)
+							s.pjs.remove(pj)
+							break
+				j += 50
+			j = -radius*50
+			i += 50
+

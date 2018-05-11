@@ -5,7 +5,8 @@ from coordinate import Coordinate
 class DestructiveBlock(Figura):
 	def __init__(self, pjs, pos=Vector(0, 0), rgb=(1.0, 1.0, 1.0)):
 		self.pjs = pjs
-
+		self.fire = None
+		
 		self.choose_pos()
 		self.coord = [Coordinate(self.pos, self.pos + Vector(50, 50))]
 
@@ -55,3 +56,7 @@ class DestructiveBlock(Figura):
 
 		ran = random.randint(0, len(availablecoords) - 1)
 		s.pos = availablecoords[ran].inf
+
+	def explode(self, fire):
+		self.fire = fire
+

@@ -1,6 +1,7 @@
 from CC3501Utils import *
 from coordinate import Coordinate
 from datetime import datetime
+from destructiveblock import DestructiveBlock
 
 class Fire(Figura):
 	def __init__(self, pjs, radius, pos=Vector(0, 0), rgb=(1.0, 1.0, 1.0)):
@@ -47,16 +48,14 @@ class Fire(Figura):
 			for p in direction:
 				coord = Coordinate(p, p + Vector(50, 50))
 				
-				grid = s.pjs[0]
+				for pj in s.pjs:
+					if pj == s.pjs[0] or type(pj) == DestructiveBlock:
+						for c in pj.coord:
+							if c.overlap(coord):
+								overlap = True
 
-				"""
-				If the coordinate of the grid overlap the 
-				coordinate of the fire to insert, stop inserting
-				fire in that direction
-				"""
-				for c in grid.coord:
-					if c.overlap(coord):
-						overlap = True
+								if type(pj) == DestructiveBlock:
+									pj.explode(s)
 
 				if not(overlap):
 					s.coord.append(coord)

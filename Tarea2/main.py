@@ -25,12 +25,17 @@ def main():
     walls = Grid(13, 15)
     bomberman = Bomberman(pjs, Vector(50, 50))
     destructiveblocks = 50
+    powerups = 5
 
     pjs.append(walls)
     pjs.append(bomberman)
     for i in range(destructiveblocks):
         pjs.append(DestructiveBlock(pjs))
+
     bomberman.clear_radius(2)
+
+    for i in range(powerups):
+        pjs.append(PowerUp(pjs))
     
     run = True
     while run:

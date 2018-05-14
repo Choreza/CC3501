@@ -10,10 +10,10 @@ class Bomberman(Figura):
 		super().__init__(pos, rgb)
 		self.pjs = pjs
 
-		self.killer = None
 		self.bombs = 5
 		self.speed = 12.5
 		self.bombradius = 2
+		self.killer = None
 
 		self.coord = []
 		self.coord.append(Coordinate(pos, pos + Vector(50, 50)))
@@ -26,9 +26,22 @@ class Bomberman(Figura):
 			glVertex2f(p[0], p[1])
 		glEnd()
 
+
+	def check_pos(self):
+		s = self
+		for pj in s.pjs:
+			if type(pj) == Fire:
+				for coord in pj.coord:
+					if coord.overlap(s.coord[0]):
+						s.die(pj)
+
+	def die(self, pj):
+		self.killer = pj
+
 	def move(self, direction):
 		s = self
 		direction *= s.speed
+
 		for pj in s.pjs:
 			
 			if type(pj) == Bomb:
@@ -38,11 +51,6 @@ class Bomberman(Figura):
 			if type(pj) == PowerUp:
 				if pj.coord[0].overlap(s.coord[0]):
 					s.eat(pj)
-
-			if type(pj) == Fire:
-				for coord in pj.coord:
-					if coord.overlap(s.coord[0]):
-						s.die(pj)
 
 			if type(pj) != Bomberman and type(pj) != Fire:
 				for c in pj.coord:
@@ -84,9 +92,6 @@ class Bomberman(Figura):
 
 		if p.posibilities[p.power] == 'radius':
 			s.bombradius += 1
-
-	def die(self, pj):
-		self.killer = pj
 
 	def clear_radius(self, radius):
 		s = self

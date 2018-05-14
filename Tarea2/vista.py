@@ -3,6 +3,7 @@ from CC3501Utils import *
 from bomb import Bomb
 from fire import Fire
 from bomberman import Bomberman
+from powerup import PowerUp
 from destructiveblock import DestructiveBlock
 
 class Vista:
@@ -10,13 +11,20 @@ class Vista:
 		grid = pjs[0]
         # limpia la pantalla
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-		
+
+		if type(pjs[1]) == Bomberman:
+			pjs[1].check_pos()
+
 		for p in pjs:
 			if type(p) == Fire:
 				if p.lifetime() > 2:
 					pjs.remove(p)
 				else:
 					p.dibujar()
+
+		for p in pjs:
+			if type(p) == PowerUp:
+				p.dibujar()
 
 		for p in pjs:
 			if type(p) == DestructiveBlock:
@@ -31,7 +39,7 @@ class Vista:
 					p.dibujar()
 
 		for p in pjs:
-			if type(p) != Bomb and type(p) != Fire and type(p) != Bomberman:
+			if type(p) != Bomb and type(p) != Fire and type(p) != PowerUp:
 				p.dibujar()
 
 			if type(p) == Bomberman:

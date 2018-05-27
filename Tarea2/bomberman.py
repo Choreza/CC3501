@@ -19,7 +19,7 @@ class Bomberman(Figure):
         self.direction = Vector(0, -1)
 
         # Speed must be smaller than max_steps
-        self.speed = self.physics.len_blocks/8
+        self.speed = self.physics.len_blocks/32
         self.max_steps = self.physics.len_blocks/2
         self.steps = self.max_steps
 
@@ -62,6 +62,7 @@ class Bomberman(Figure):
             if is_update:
                 return
 
+            self.check_pos()
             s.direction = direction
             if s.physics.can_dmove(self, direction):
                 s.steps = 0
@@ -129,6 +130,27 @@ class Bomberman(Figure):
                 j += length
             j = -radius * length
             i += length
+
+    def check_pos(self):
+        for powerup in self.pjs.powerups:
+            block = powerup.rects[0]
+            if block.overlap(self.rects[0]):
+                self.eat(powerup)
+
+    def eat(self, powerup):
+        index = powerup.power
+        power = powerup.options[index]
+
+        if power == 'bomb':
+            self.bombs += 1
+
+        elif power == 'radius':
+            self.bombradius += 1
+
+        elif power == 'speed':
+            self.speed *= 2
+
+        powerup.consume()
 
     def update(self):
         self.move(self.direction, is_update=True)

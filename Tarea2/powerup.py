@@ -48,6 +48,10 @@ class PowerUp(Figure):
         self.rects.append(rect)
         self.physics.add_block(rect, self.stype)
 
+    def consume(self):
+        self.physics.blocks['powerup'].remove(self.rects[0])
+        self.pjs.powerups.remove(self)
+
     def figure(self):
         glBegin(GL_QUADS)
         glColor3f(0 / 255, 128.0 / 255, 0 / 255)

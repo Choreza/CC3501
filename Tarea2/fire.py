@@ -1,84 +1,119 @@
-from CC3501Utils import *
-from coordinate import Coordinate
-from datetime import datetime
-from destructiveblock import DestructiveBlock
+from cc3501utils.vector import Vector
+from cc3501utils.figure import Figure
+from OpenGL.GL import *
+from rectangle import Rectangle
 
-class Fire(Figura):
-	def __init__(self, pjs, radius, pos=Vector(0, 0), rgb=(1.0, 1.0, 1.0)):
-		self.pjs = pjs
-		self.pos = pos
-		self.radius = radius
 
-		self.coord = []
-		self.init_coordinates()
-		
-		self.start = datetime.now()
+class Fire(Figure):
+    def __init__(self, pjs, radius, fps, pos, rgb=(1.0, 1.0, 1.0)):
+        self.pjs = pjs
+        self.physics = pjs.physics
+        self.pos = pos
+        self.radius = radius
 
-		super().__init__(pos, rgb)
-		
+        self.lifetime = 0
+        self.timeout = 2*fps
 
-	def init_coordinates(self):
-		s = self
+        self.stype = 'fire'
+        self.rpos = pos
+        self.rects = list()
+        self.pos = self.physics.scl_coord_res(self.rpos)
+        self.init_blocks()
+        super().__init__(self.pos, rgb)
 
-		x = s.pos.x
-		y = s.pos.y
+    def init_blocks(self):
+        s = self
 
-		s.coord.append(Coordinate(s.pos, s.pos + Vector(50, 50)))
+        x = s.rpos.x
+        y = s.rpos.y
 
-		directions = []
-		directions.append([])
-		for i in range(1, s.radius):
-			directions[0].append(Vector(x - i*50, y))
+        length = s.physics.len_blocks
+        block = Rectangle(s.rpos, s.rpos + Vector(length, length))
 
-		directions.append([])
-		for i in range(1, s.radius):
-			directions[1].append(Vector(x + i*50, y))
+        s.physics.add_block(block, s.stype)
+        s.rects.append(block)
 
-		directions.append([])
-		for i in range(1, s.radius):
-			directions[2].append(Vector(x, y - i*50))
+        directions = list()
+        directions.append([])
+        for i in range(1, s.radius):
+            directions[0].append(Vector(x - i * length, y))
 
-		directions.append([])
-		for i in range(1, s.radius):
-			directions[3].append(Vector(x, y + i*50))
+        directions.append([])
+        for i in range(1, s.radius):
+            directions[1].append(Vector(x + i * length, y))
 
-		for direction in directions:
-			overlap = False
+        directions.append([])
+        for i in range(1, s.radius):
+            directions[2].append(Vector(x, y - i * length))
 
-			for p in direction:
-				coord = Coordinate(p, p + Vector(50, 50))
-				
-				for pj in s.pjs:
-					if pj == s.pjs[0] or type(pj) == DestructiveBlock:
-						for c in pj.coord:
-							if c.overlap(coord):
-								overlap = True
+        directions.append([])
+        for i in range(1, s.radius):
+            directions[3].append(Vector(x, y + i * length))
 
-								if type(pj) == DestructiveBlock:
-									pj.explode(s)
+        for direction in directions:
+            overlap = False
 
-				if not(overlap):
-					s.coord.append(coord)
-				else:
-					break
-				
-	def figura(self):
-		s = self
-		
-		glBegin(GL_QUADS)
-		glColor3f(255.0/255, 165.0/255, 0.0/255)
-		for p in s.coord:
-			aux = p.inf - s.pos
-			x = aux.x
-			y = aux.y
-			glVertex2f(x, y)
-			glVertex2f(x + 50, y)
-			glVertex2f(x + 50, y + 50)
-			glVertex2f(x, y + 50)
-		glEnd()
+            for p in direction:
+                rect = Rectangle(p, p + Vector(length, length))
 
-	def lifetime(self):
-		now = datetime.now()
-		difference = (now - self.start).total_seconds()
-		return difference
+                # Checks if a bomb overlap in this direction.
+                bombs = s.pjs.bombs
+                for bomb in bombs:
+                    block = bomb.rects[0]
 
+                    # If overlaps, makes the bomb explode.
+                    if block.overlap(rect):
+                        bomb.explode()
+                        overlap = True
+                        break
+
+                for dblock in s.pjs.dblocks:
+                    if dblock.rects[0].overlap(rect):
+                        overlap = True
+                        dblock.explode(s)
+
+                if not overlap:
+                    # Checks if the fire block to insert overlaps the grid.
+                    blocks = s.physics.blocks['sblock']
+                    for block in blocks:
+                        if block.overlap(rect):
+                            overlap = True
+                            break
+
+                if not overlap:
+                    s.rects.append(rect)
+                    s.physics.add_block(rect, s.stype)
+
+                else:
+                    break
+
+    def figure(self):
+        glBegin(GL_QUADS)
+        glColor3f(255 / 255, 165.0 / 255, 0 / 255)
+
+        for block in self.rects:
+            lower = self.physics.scl_coord_res(block.inf)
+            upper = self.physics.scl_coord_res(block.sup)
+
+            clower = self.physics.scl_coord_res(self.rects[0].inf)
+
+            upper += clower * -1
+            lower += clower * -1
+
+            glVertex2f(lower.x, lower.y)
+            glVertex2f(lower.x, upper.y)
+            glVertex2f(upper.x, upper.y)
+            glVertex2f(upper.x, lower.y)
+
+        glEnd()
+
+    def extinguish(self):
+        s = self
+        for b in s.rects:
+            s.physics.blocks[s.stype].remove(b)
+        s.pjs.fires.remove(s)
+
+    def update(self):
+        self.lifetime += 1
+        if self.lifetime > self.timeout:
+            self.extinguish()

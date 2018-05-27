@@ -3,34 +3,6 @@
 #####################################################################
 from math import *
 
-import pygame
-from OpenGL.GL import *
-from OpenGL.GLU import *
-from pygame.locals import *
-
-
-# funcion para inicializar pygame y opengl en 2D
-def init(ancho, alto, titulo):
-    # inicializar pygame
-    pygame.init()
-    pygame.display.set_mode((ancho, alto), OPENGL | DOUBLEBUF)
-    pygame.display.set_caption(titulo)
-
-    # inicializar opengl
-    glViewport(0, 0, ancho, alto)
-    glMatrixMode(GL_PROJECTION)
-    glLoadIdentity()
-    gluOrtho2D(0.0, ancho, 0.0, alto)
-    glMatrixMode(GL_MODELVIEW)
-    glLoadIdentity()
-
-    # definir variables de opengl
-    glClearColor(255.0, 255.0, 255.0, 255.0)  # color del fondo
-    glShadeModel(GL_SMOOTH)
-    glClearDepth(1.0)
-    # glDisable(GL_DEPTH_TEST)
-    return
-
 
 # Clase para representar vectores en un espacio 2D
 class Vector:
@@ -59,6 +31,9 @@ class Vector:
 
     # ------------------------ definicion de operaciones primitivas +-*/ -----------------------------
     # suma vectores
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
     def __add__(self, other):
         return Vector(self.x + other.x, self.y + other.y)
 
@@ -119,36 +94,6 @@ def distancia(v1: Vector, v2: Vector):
 def punto(v1: Vector, v2: Vector):
     return v1.x * v2.x + v1.y * v2.y
 
-
-# Clase generica para crear figuras de openGL con posicion y color.
-# se usa self.dibujar() para dibujar en la escena.
-# self.figura define las primitivas que tiene.
-class Figura:
-    def __init__(self, pos: Vector, rgb=(1.0, 1.0, 1.0)):
-        self.pos = pos
-        self.color = rgb
-        self.lista = 0
-        self.crear()
-
-    def crear(self):
-        self.lista = glGenLists(1)
-        glNewList(self.lista, GL_COMPILE)
-
-        self.figura()
-
-        glEndList()
-
-    def dibujar(self):
-        glPushMatrix()
-
-        glColor3fv(self.color)
-        glTranslatef(self.pos.x, self.pos.y, 0.0)
-        glCallList(self.lista)
-
-        glPopMatrix()
-
-    def figura(self):
-        pass
 
     
         

@@ -1,64 +1,79 @@
 # Implementación testeada con:
-## Python 3.5
-## PyOpenGL 3.1.0
-## PyGame 1.9.3
+#
+# Python 3.5
+# PyOpenGL 3.1.0
+# PyGame 1.9.3
 #####################################################################
 import os
-import random
-from CC3501Utils import *
+from cc3501utils.init import *
+from cc3501utils.vector import Vector
 from grid import Grid
-from vista import *
+from physics import Physics
+from view import View
+from characters import Characters
 from bomberman import Bomberman
-from destructiveblock import DestructiveBlock
+from powerup import PowerUp
+from dblock import DBlock
 #####################################################################
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'  # centrar pantalla
 
+
 def main():
-    ancho = 15*50
-    alto = 650
-    init(ancho, alto, "Ejemplo Aux")
-    vista = Vista()
+    rectlen = 50
+    width = 15*rectlen
+    height = 13*rectlen
+    init(width, height, "Bomberman")
+    view = View()
     clock = pygame.time.Clock()
+    fps = 60
+    pjs = Characters()
+    physics = Physics(15, 13, (1 << 11), width, height)
+    pjs.set_physics(physics)
 
-    pjs = []
-    walls = Grid(13, 15)
-    bomberman = Bomberman(pjs, Vector(50, 50))
-    destructiveblocks = 50
-    powerups = 5
+    grid = Grid(pjs)
+    bomberman = Bomberman(pjs, fps, Vector(physics.len_blocks, physics.len_blocks))
 
-    pjs.append(walls)
-    pjs.append(bomberman)
-    for i in range(destructiveblocks):
-        pjs.append(DestructiveBlock(pjs))
+    nofdblocks = 50
+    nofpowerup = 20
+
+    pjs.add_bomberman(bomberman)
+    pjs.set_grid(grid)
+
+    for i in range(nofdblocks):
+        pjs.dblocks.append(DBlock(pjs))
 
     bomberman.clear_radius(2)
 
-    for i in range(powerups):
-        pjs.append(PowerUp(pjs))
-    
+    for i in range(nofpowerup):
+        pjs.add_powerup(PowerUp(pjs))
+
     run = True
     while run:
 
         for event in pygame.event.get():
             if event.type == QUIT:  # cerrar ventana
                 run = False
-        keys = pygame.key.get_pressed()
-        if keys[K_RIGHT]:
-            bomberman.move(Vector(1, 0))
-        if keys[K_LEFT]:
-            bomberman.move(Vector(-1, 0))
-        if keys[K_UP]:
-            bomberman.move(Vector(0, 1))
-        if keys[K_DOWN]:
-            bomberman.move(Vector(0, -1))
-        if keys[K_SPACE]:
-            bomberman.put_bomb()
-            
-        vista.dibujar(pjs)
+
+        if not bomberman.is_dead():
+            keys = pygame.key.get_pressed()
+            if keys[K_RIGHT]:
+                bomberman.move(Vector(1, 0))
+            if keys[K_LEFT]:
+                bomberman.move(Vector(-1, 0))
+            if keys[K_UP]:
+                bomberman.move(Vector(0, 1))
+            if keys[K_DOWN]:
+                bomberman.move(Vector(0, -1))
+            if keys[K_SPACE]:
+                bomberman.put_bomb()
+
+        pjs.update()
+        view.draw(pjs)
         pygame.display.flip()  # actualizar pantalla
-        clock.tick(int(1000/60))  # ajusta a 30 fps
+        clock.tick(30)
 
     pygame.quit()
+
 
 main()

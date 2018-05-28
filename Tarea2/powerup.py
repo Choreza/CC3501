@@ -48,7 +48,26 @@ class PowerUp(Figure):
         self.rects.append(rect)
         self.physics.add_block(rect, self.stype)
 
-    def consume(self):
+    def increase_bombs(self, character):
+        character.bombs += 1
+
+    def increase_radius(self, character):
+        character.bombradius += 1
+
+    def increase_speed(self, character):
+        character.speed = min(character.max_steps/4, character.speed * 2)
+
+    def consume_by(self, character):
+        power = self.options[self.power]
+        if power == 'bomb':
+            self.increase_bombs(character)
+
+        elif power == 'radius':
+            self.increase_radius(character)
+
+        elif power == 'speed':
+            self.increase_speed(character)
+
         self.physics.blocks['powerup'].remove(self.rects[0])
         self.pjs.powerups.remove(self)
 

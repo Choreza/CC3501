@@ -138,19 +138,7 @@ class Bomberman(Figure):
                 self.eat(powerup)
 
     def eat(self, powerup):
-        index = powerup.power
-        power = powerup.options[index]
-
-        if power == 'bomb':
-            self.bombs += 1
-
-        elif power == 'radius':
-            self.bombradius += 1
-
-        elif power == 'speed':
-            self.speed *= 2
-
-        powerup.consume()
+        powerup.consume_by(self)
 
     def update(self):
         self.move(self.direction, is_update=True)

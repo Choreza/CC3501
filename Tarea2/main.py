@@ -29,7 +29,7 @@ def main():
     clock = pygame.time.Clock()
     fps = 60
     pjs = Characters()
-    physics = Physics(15, 13, (1 << 11), width, height)
+    physics = Physics(pjs, 15, 13, (1 << 11), width, height)
     pjs.set_physics(physics)
 
     grid = Grid(pjs)

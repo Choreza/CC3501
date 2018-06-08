@@ -3,7 +3,7 @@ from rectangle import Rectangle
 
 
 class Physics:
-    def __init__(self, cols, rows, len_blocks, rwidth, rheight):
+    def __init__(self, pjs, cols, rows, len_blocks, rwidth, rheight):
         """
         Builder of physics class, used to model a discrete grid that will
         be used to get the position of every element in the game at every
@@ -14,6 +14,7 @@ class Physics:
         :param rows: Number of blocks vertically.
         :param len_blocks: Length for all blocks.
         """
+        self.pjs = pjs
         self.cols = cols
         self.rows = rows
         self.len_blocks = len_blocks
@@ -143,8 +144,13 @@ class Physics:
         for block in blocks:
             if block.overlap(cblock + d * c.max_steps):
                 return False
+
+        for enemy in s.pjs.enemies:
+            if enemy.rects[0] != cblock and enemy.rects[0].overlap(cblock + d * c.max_steps):
+                return False
+
         return True
-    
+
     def scl_coord_res(self, coord):
         real_x = self.real_width
         real_y = self.real_height

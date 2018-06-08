@@ -91,6 +91,9 @@ class Characters:
         for bomberman in s.bombermen:
             bomberman.update()
 
+        for enemy in s.enemies:
+            enemy.update()
+
         for dblock in s.dblocks:
             dblock.update()
 

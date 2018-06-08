@@ -1,22 +1,20 @@
 from cc3501utils.vector import Vector
 from cc3501utils.figure import Figure
 from OpenGL.GL import *
-from bomb import Bomb
+import random
 from rectangle import Rectangle
 
 
-class Bomberman(Figure):
-    def __init__(self, pjs, fps, rpos):
+class Enemy(Figure):
+    def __init__(self, pjs, fps):
         self.pjs = pjs
         self.physics = pjs.physics
 
-        self.stype = 'bomberman'
-        self.bombs = 3
-        self.bombradius = 2
-        self.last_bomb = None
+        self.stype = 'enemy'
         self.killer = None
 
         self.direction = Vector(0, -1)
+        self.directions = [Vector(0, -1), Vector(0, 1), Vector(1, 0), Vector(-1, 0)]
 
         # Speed must be smaller than max_steps
         self.speed = self.physics.len_blocks/32
@@ -25,51 +23,36 @@ class Bomberman(Figure):
 
         self.fps = fps
 
-        self.rpos = rpos
+        self.rpos = None
+        self.choose_rpos()
         self.rects = list()
         self.init_blocks()
         self.pos = self.physics.scl_coord_res(self.rpos)
         super().__init__(self.pos, (1.0, 1.0, 1.0))
-        self.clear_radius(2)
-
-    def put_bomb(self):
-        s = self
-        if s.bombs == 0:
-            return
-
-        block = s.physics.blocks[s.stype][0]
-        xinf = block.inf.x - block.inf.x % s.physics.len_blocks
-        yinf = block.inf.y - block.inf.y % s.physics.len_blocks
-
-        length = s.physics.len_blocks
-        new_bomb = Rectangle(Vector(xinf, yinf), Vector(xinf + length, yinf + length))
-
-        bombs = list()
-        if 'bomb' in s.physics.blocks:
-            bombs = s.physics.blocks['bomb']
-
-        for bomb in bombs:
-            if bomb.overlap(new_bomb):
-                return
-
-        bomb = Bomb(s, s.pjs, s.bombradius, s.fps, Vector(xinf, yinf))
-        s.last_bomb = bomb
-        s.pjs.add_bomb(bomb)
-        s.bombs -= 1
 
     def move(self, direction, is_update=False):
         s = self
 
         if not self.is_moving():
-            self.check_powerups()
             self.check_fires()
             if is_update:
                 return
 
             s.direction = direction
-            if s.physics.can_move_bomberman(self, direction) and not self.killer:
-                s.steps = 0
-                s.move(s.direction)
+            can_move = False
+            for d in s.directions:
+                can_move = can_move or s.physics.can_move_enemy(self, d)
+
+            if not can_move:
+                return
+
+            while not s.physics.can_move_enemy(self, s.direction):
+                s.direction = s.directions[random.randint(0, 3)]
+
+            if s.physics.can_move_enemy(self, s.direction) and not self.killer:
+                    s.steps = 0
+                    s.move(s.direction)
+
         else:
             speed = min(s.speed, s.max_steps - s.steps)
             s.step_to(s.direction * speed)
@@ -97,7 +80,7 @@ class Bomberman(Figure):
         length = self.physics.len_blocks
         rect = Rectangle(self.rpos, self.rpos + Vector(length, length))
         self.rects.append(rect)
-        self.physics.add_block(rect, 'bomberman')
+        self.physics.add_block(rect, self.stype)
 
     def figure(self):
         glBegin(GL_QUADS)
@@ -119,17 +102,22 @@ class Bomberman(Figure):
     def clear_radius(self, radius):
         s = self
         length = self.physics.len_blocks
-        for i in range(-radius, radius + 1):
-            for j in range(-radius, radius + 1):
-                block = Rectangle(Vector(i * length, j * length), Vector(length * (i + 1), length * (j + 1)))
-                if not(block in self.physics.unavailable_blocks):
-                    self.physics.unavailable_blocks.append(block)
 
-    def check_powerups(self):
-        for powerup in self.pjs.powerups:
-            block = powerup.rects[0]
-            if block.overlap(self.rects[0]):
-                self.eat(powerup)
+        i = -radius * length
+        j = -radius * length
+
+        while i < radius * length:
+            while j < radius * length:
+                arect = Rectangle(s.rpos + Vector(i, j), s.rpos + Vector(i + length, j + length))
+                for dblock in s.pjs.dblocks:
+                    for rect in dblock.rects:
+                        if arect.overlap(rect):
+                            s.pjs.dblocks.remove(dblock)
+                            s.physics.blocks['dblock'].remove(rect)
+                            break
+                j += length
+            j = -radius * length
+            i += length
 
     def check_fires(self):
         for fire in self.pjs.fires:
@@ -143,13 +131,20 @@ class Bomberman(Figure):
         powerup.consume_by(self)
 
     def die(self):
-        self.pjs.bombermen.remove(self)
+        self.pjs.enemies.remove(self)
         for block in self.physics.blocks[self.stype]:
             if block == self.rects[0]:
                 self.physics.blocks[self.stype].remove(block)
+
+    def choose_rpos(self):
+        s = self
+        blocks = s.physics.available_blocks
+        block = blocks[random.randint(0, len(blocks) - 1)]
+        s.physics.available_blocks.remove(block)
+        s.rpos = block.inf
 
     def update(self):
         if self.killer and not(self.killer in self.pjs.fires):
             self.die()
         else:
-            self.move(self.direction, is_update=True)
+            self.move(self.direction)

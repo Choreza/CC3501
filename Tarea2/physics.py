@@ -20,11 +20,24 @@ class Physics:
 
         self.height = rows * len_blocks
         self.width = cols * len_blocks
+        print('height and witdth', self.height, self.width)
 
         self.real_height = rheight
         self.real_width = rwidth
 
         self.blocks = dict()
+        self.available_blocks = list()
+        self.unavailable_blocks = list()
+
+    def find_available_blocks(self):
+        s = self
+        length = self.len_blocks
+
+        for i in range(0, s.cols):
+            for j in range(0, s.rows):
+                block = Rectangle(Vector(length * i, length * j), Vector(length * (i + 1), length * (j + 1)))
+                if block not in self.unavailable_blocks:
+                    self.available_blocks.append(block)
 
     def add_block(self, block, type):
         """
@@ -36,6 +49,7 @@ class Physics:
         if not (type in self.blocks):
             self.blocks[type] = list()
         self.blocks[type].append(block)
+        self.unavailable_blocks.append(block)
 
     def is_valid_move(self, block, direction):
         """
@@ -58,7 +72,7 @@ class Physics:
                     break
             bomberman.rects[0] += direction
 
-    def can_dmove(self, character, direction):
+    def can_move_bomberman(self, character, direction):
         """
         Checks if a block can directly move to te given direction, this method
         assumes that block object has a direction parameter.
@@ -100,6 +114,37 @@ class Physics:
                 return False
         return True
 
+    def can_move_enemy(self, character, direction):
+        """
+                Checks if a block can directly move to te given direction, this method
+                assumes that block object has a direction parameter.
+                :param character:
+                :param direction:
+                :return:
+                """
+        s = self
+        c = character
+        d = direction
+        cblock = c.rects[0]
+
+        if 'bomb' in s.blocks:
+            blocks = s.blocks['bomb']
+
+            for block in blocks:
+                if block.overlap(cblock + d * c.max_steps):
+                    return False
+
+        blocks = s.blocks['dblock']
+        for block in blocks:
+            if block.overlap(cblock + d * c.max_steps):
+                return False
+
+        blocks = s.blocks['sblock']
+        for block in blocks:
+            if block.overlap(cblock + d * c.max_steps):
+                return False
+        return True
+    
     def scl_coord_res(self, coord):
         real_x = self.real_width
         real_y = self.real_height

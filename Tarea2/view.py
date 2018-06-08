@@ -23,3 +23,6 @@ class View:
         for bomberman in pjs.bombermen:
             bomberman.draw()
 
+        for enemy in pjs.enemies:
+            enemy.draw()
+

@@ -13,7 +13,7 @@ class DBlock(Figure):
         self.stype = 'dblock'
 
         self.rpos = None
-        self.choose_pos()
+        self.choose_rpos()
         self.pos = self.physics.scl_coord_res(self.rpos)
         self.rects = list()
         self.init_blocks()
@@ -41,50 +41,12 @@ class DBlock(Figure):
         self.rects.append(rect)
         self.physics.add_block(rect, self.stype)
 
-    def choose_pos(self):
+    def choose_rpos(self):
         s = self
-        length = s.physics.len_blocks
-
-        x = 0
-        y = 0
-
-        for i in range(len(s.pjs.grid.rects)):
-            x = max(x, s.pjs.grid.rects[i].inf.x)
-            y = max(y, s.pjs.grid.rects[i].inf.y)
-
-        i = 0
-        j = 0
-        availablecoords = list()
-        while i <= x:
-            while j <= y:
-                arect = Rectangle(Vector(i, j), Vector(i + length, j + length))
-
-                isavailable = True
-                for rect in s.pjs.grid.rects:
-                    if rect.overlap(arect):
-                        isavailable = False
-                        break
-
-                if isavailable:
-                    for dblock in s.pjs.dblocks:
-                        for rect in dblock.rects:
-                            if rect.overlap(arect):
-                                isavailable = False
-                                break
-
-                if isavailable:
-                    for bomberman in s.pjs.bombermen:
-                        if bomberman.rects[0].overlap(arect):
-                            isavailable = False
-
-                if isavailable:
-                    availablecoords.append(arect)
-                j += length
-            j = 0
-            i += length
-
-        ran = random.randint(0, len(availablecoords) - 1)
-        s.rpos = availablecoords[ran].inf
+        blocks = s.physics.available_blocks
+        block = blocks[random.randint(0, len(blocks) - 1)]
+        s.physics.available_blocks.remove(block)
+        s.rpos = block.inf
 
     def explode(self, fire):
         self.fire = fire

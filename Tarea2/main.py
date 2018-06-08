@@ -14,6 +14,7 @@ from characters import Characters
 from bomberman import Bomberman
 from powerup import PowerUp
 from dblock import DBlock
+from enemy import Enemy
 #####################################################################
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'  # centrar pantalla
@@ -34,23 +35,25 @@ def main():
     grid = Grid(pjs)
     bomberman = Bomberman(pjs, fps, Vector(physics.len_blocks, physics.len_blocks))
 
+    nofenemies = 3
     nofdblocks = 50
     nofpowerup = 20
 
     pjs.add_bomberman(bomberman)
     pjs.set_grid(grid)
 
+    physics.find_available_blocks()
     for i in range(nofdblocks):
         pjs.dblocks.append(DBlock(pjs))
-
-    bomberman.clear_radius(2)
 
     for i in range(nofpowerup):
         pjs.add_powerup(PowerUp(pjs))
 
+    for i in range(nofenemies):
+        pjs.add_enemy(Enemy(pjs, fps))
+
     run = True
     while run:
-
         for event in pygame.event.get():
             if event.type == QUIT:  # cerrar ventana
                 run = False

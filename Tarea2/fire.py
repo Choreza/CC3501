@@ -88,24 +88,133 @@ class Fire(Figure):
                     break
 
     def figure(self):
-        glBegin(GL_QUADS)
-        glColor3f(255 / 255, 165.0 / 255, 0 / 255)
-
+        top = 0
         for block in self.rects:
-            lower = self.physics.scl_coord_res(block.inf)
-            upper = self.physics.scl_coord_res(block.sup)
+            if block.inf.y > self.rects[0].inf.y:
+                top += 1
 
-            clower = self.physics.scl_coord_res(self.rects[0].inf)
+        bot = 0
+        for block in self.rects:
+            if block.inf.y < self.rects[0].inf.y:
+                bot += 1
 
-            upper += clower * -1
-            lower += clower * -1
+        left = 0
+        for block in self.rects:
+            if block.inf.x < self.rects[0].inf.x:
+                left += 1
 
-            glVertex2f(lower.x, lower.y)
-            glVertex2f(lower.x, upper.y)
-            glVertex2f(upper.x, upper.y)
-            glVertex2f(upper.x, lower.y)
+        right = 0
+        for block in self.rects:
+            if block.inf.x > self.rects[0].inf.x:
+                right += 1
+
+        print(top, bot, right, left)
+
+        lower = self.physics.scl_coord_res(self.rects[0].inf)
+        upper = self.physics.scl_coord_res(self.rects[0].sup)
+        upper += lower * -1
+        lower += lower * -1
+
+        length = upper.x
+
+        glBegin(GL_QUADS)
+        glColor3f(255 / 255, 69.0 / 255, 0.0 / 255)
+        glVertex2f(upper.x, upper.y)
+        glVertex2f(upper.x, lower.y)
+        glVertex2f(lower.x, lower.y)
+        glVertex2f(lower.x, upper.y)
+
+        glColor3f(255 / 255, 165.0 / 255, 0.0 / 255)
+        glVertex2f(upper.x, 0.75 * upper.y)
+        glVertex2f(upper.x, 0.25 * upper.y)
+        glVertex2f(lower.x, 0.25 * upper.y)
+        glVertex2f(lower.x, 0.75 * upper.y)
+
+        glVertex2f(upper.x * 0.75, upper.y)
+        glVertex2f(upper.x * 0.75, lower.y)
+        glVertex2f(upper.x * 0.25, lower.y)
+        glVertex2f(upper.x * 0.25, upper.y)
 
         glEnd()
+
+        glBegin(GL_TRIANGLES)
+        glColor3f(255 / 255, 165.0 / 255, 0.0 / 255)
+        glVertex2f(upper.x * 0.75, upper.y * 0.75)
+        glVertex2f(upper.x * 0.75, upper.y)
+        glVertex2f(upper.x, 0.75 * upper.y)
+
+        glVertex2f(upper.x * 0.75, upper.y * 0.25)
+        glVertex2f(upper.x, upper.y * 0.25)
+        glVertex2f(upper.x * 0.75, lower.x)
+
+        glVertex2f(upper.x * 0.25, upper.y)
+        glVertex2f(upper.x * 0.25, upper.y * 0.75)
+        glVertex2f(lower.x, upper.y * 0.75)
+
+        glVertex2f(upper.x * 0.25, upper.y * 0.25)
+        glVertex2f(upper.x * 0.25, lower.y)
+        glVertex2f(lower.x, upper.y * 0.25)
+        glEnd()
+
+        if top:
+            glBegin(GL_TRIANGLES)
+            glColor3f(255 / 255, 69.0 / 255, 0.0 / 255)
+            glVertex2f(upper.x, upper.y)
+            glVertex2f(upper.x / 2, upper.y + top * upper.y)
+            glVertex2f(lower.x, upper.y)
+            glEnd()
+
+            glBegin(GL_TRIANGLES)
+            glColor3f(255 / 255, 165.0 / 255, 0.0 / 255)
+            glVertex2f(0.75 * upper.x, upper.y)
+            glVertex2f(upper.x / 2, upper.y + top * upper.y * 0.8)
+            glVertex2f(0.25 * upper.x, upper.y)
+            glEnd()
+
+        if bot:
+            glBegin(GL_TRIANGLES)
+            glColor3f(255 / 255, 69.0 / 255, 0.0 / 255)
+            glVertex2f(upper.x, lower.y)
+            glVertex2f(upper.x / 2, -bot * upper.y)
+            glVertex2f(lower.x, lower.y)
+            glEnd()
+
+            glBegin(GL_TRIANGLES)
+            glColor3f(255 / 255, 165.0 / 255, 0.0 / 255)
+            glVertex2f(0.75 * upper.x, lower.y)
+            glVertex2f(upper.x / 2, -bot * upper.y * 0.8)
+            glVertex2f(0.25 * upper.x, lower.y)
+            glEnd()
+
+        if right:
+            glBegin(GL_TRIANGLES)
+            glColor3f(255 / 255, 69.0 / 255, 0.0 / 255)
+            glVertex2f(upper.x, upper.y)
+            glVertex2f(upper.x + right * upper.x, upper.y / 2)
+            glVertex2f(upper.x, lower.y)
+            glEnd()
+
+            glBegin(GL_TRIANGLES)
+            glColor3f(255 / 255, 165.0 / 255, 0.0 / 255)
+            glVertex2f(upper.x, 0.75 * upper.y)
+            glVertex2f(upper.x + right * upper.x * 0.8, upper.y / 2)
+            glVertex2f(upper.x, 0.25 * upper.y)
+            glEnd()
+
+        if left:
+            glBegin(GL_TRIANGLES)
+            glColor3f(255 / 255, 69.0 / 255, 0.0 / 255)
+            glVertex2f(lower.x, upper.y)
+            glVertex2f(-left * upper.x, upper.y / 2)
+            glVertex2f(lower.x, lower.y)
+            glEnd()
+
+            glBegin(GL_TRIANGLES)
+            glColor3f(255 / 255, 165.0 / 255, 0.0 / 255)
+            glVertex2f(lower.x, upper.y * 0.75)
+            glVertex2f(-left * upper.x * 0.8, upper.y / 2)
+            glVertex2f(lower.x, upper.y * 0.25)
+            glEnd()
 
     def extinguish(self):
         s = self

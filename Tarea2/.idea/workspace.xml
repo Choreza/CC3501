@@ -10,7 +10,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/Tarea2$main.coverage" NAME="main Coverage Results" MODIFIED="1528519899534" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Tarea2$main.coverage" NAME="main Coverage Results" MODIFIED="1528523263694" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Tarea2$test.coverage" NAME="test Coverage Results" MODIFIED="1526862315076" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/cc3501utils" />
   </component>
   <component name="DatabaseView">
@@ -30,8 +30,8 @@
       <file leaf-file-name="bomberman.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bomberman.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="903">
-              <caret line="167" column="46" selection-start-line="167" selection-start-column="46" selection-end-line="167" selection-end-column="46" />
+            <state relative-caret-position="198">
+              <caret line="111" column="9" selection-start-line="111" selection-start-column="9" selection-end-line="115" selection-end-column="27" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -39,14 +39,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="bomb.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="bomb.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bomb.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="197">
-              <caret line="98" column="15" selection-start-line="98" selection-start-column="15" selection-end-line="98" selection-end-column="15" />
+            <state relative-caret-position="242">
+              <caret line="94" column="8" selection-start-line="94" selection-start-column="8" selection-end-line="94" selection-end-column="52" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="fire.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/fire.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="317">
+              <caret line="155" column="42" selection-start-line="155" selection-start-column="42" selection-end-line="155" selection-end-column="42" />
             </state>
           </provider>
         </entry>
@@ -130,7 +139,6 @@
         <option value="$PROJECT_DIR$/cc3501utils/physics.py" />
         <option value="$PROJECT_DIR$/cc3501utils/test.py" />
         <option value="$PROJECT_DIR$/rectangle.py" />
-        <option value="$PROJECT_DIR$/fire.py" />
         <option value="$PROJECT_DIR$/powerup.py" />
         <option value="$PROJECT_DIR$/cc3501utils/figure.py" />
         <option value="$PROJECT_DIR$/characters.py" />
@@ -143,6 +151,7 @@
         <option value="$PROJECT_DIR$/bomberman.py" />
         <option value="$PROJECT_DIR$/cc3501utils/vector.py" />
         <option value="$PROJECT_DIR$/bomb.py" />
+        <option value="$PROJECT_DIR$/fire.py" />
       </list>
     </option>
   </component>
@@ -640,13 +649,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fire.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1020">
-          <caret line="71" column="28" selection-start-line="71" selection-start-column="28" selection-end-line="71" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/enemy.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="645">
@@ -675,16 +677,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bomberman.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="903">
-          <caret line="167" column="46" selection-start-line="167" selection-start-column="46" selection-end-line="167" selection-end-column="46" />
-          <folding>
-            <element signature="e#0#37#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/cc3501utils/vector.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="317">
@@ -692,13 +684,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bomb.py">
+    <entry file="file://$PROJECT_DIR$/bomberman.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="197">
-          <caret line="98" column="15" selection-start-line="98" selection-start-column="15" selection-end-line="98" selection-end-column="15" />
+        <state relative-caret-position="198">
+          <caret line="111" column="9" selection-start-line="111" selection-start-column="9" selection-end-line="115" selection-end-column="27" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bomb.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="242">
+          <caret line="94" column="8" selection-start-line="94" selection-start-column="8" selection-end-line="94" selection-end-column="52" />
+          <folding>
+            <element signature="e#0#37#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fire.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="317">
+          <caret line="155" column="42" selection-start-line="155" selection-start-column="42" selection-end-line="155" selection-end-column="42" />
         </state>
       </provider>
     </entry>

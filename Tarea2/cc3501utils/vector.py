@@ -45,6 +45,9 @@ class Vector:
     def __mul__(self, a: (float, int)):
         return Vector(self.x * a, self.y * a)
 
+    def __abs__(self):
+        return (self.x ** 2 + self.y ** 2)**0.5
+
     # division por numero, pondera
     def __truediv__(self, a: (float, int)):
         return Vector(self.x / a, self.y / a)

@@ -39,22 +39,63 @@ class Bomb(Figure):
         s.pjs.fires.append(Fire(s.pjs, s.radius, s.fps, s.rpos))
 
     def figure(self):
-        glBegin(GL_TRIANGLE_FAN)
-        glColor3f(0 / 255, 0 / 255, 0 / 255)
-
         lower = self.physics.scl_coord_res(self.rects[0].inf)
         upper = self.physics.scl_coord_res(self.rects[0].sup)
 
         upper += lower * -1
         lower += lower * -1
 
-        cx = upper.x/2.0
-        cy = upper.y/2.0
-        r = cx
-        delta = 2 * np.pi / 20
-        glVertex2f(cx, cy)
-        for i in range(21):
-            glVertex2f(cx + r * np.cos(i * delta), cy + r * np.sin(i * delta))
+        center = upper / 2
+        radius = center.x
+
+        n = 30
+        d_theta = 2 * np.pi / n
+        glBegin(GL_TRIANGLE_FAN)
+        glColor3f(0.0 / 255, 0.0 / 255, 0.0 / 255)
+        glVertex2f(center.x, center.y)
+        for i in range(n + 1):
+            rx = center.x + radius * np.cos(d_theta * i)
+            ry = center.y + radius * np.sin(d_theta * i)
+            glVertex2f(rx, ry)
+        glEnd()
+
+        alpha = 0.75 * np.pi
+        vec_radius = Vector(radius * np.cos(alpha), radius * np.sin(alpha))
+        brightness = 10
+        for b in range(1, brightness + 1):
+            b_center = vec_radius * b / brightness
+            b_radius = (radius - abs(b_center))
+
+            glBegin(GL_TRIANGLE_FAN)
+            glColor3f((100 / brightness) * (b + 1) / 255.0,
+                      (100 / brightness) * (b + 1) / 255.0,
+                      (100 / brightness) * (b + 1) / 255.0)
+
+            glVertex2f(b_center.x + center.x, b_center.y + center.y)
+            for i in range(n + 1):
+                rx = b_center.x + center.x + b_radius * np.cos(d_theta * i)
+                ry = b_center.y + center.y + b_radius * np.sin(d_theta * i)
+                glVertex2f(rx, ry)
+            glEnd()
+
+        alpha = 0.25 * np.pi
+        vec_radius = Vector(radius * np.cos(alpha), radius * np.sin(alpha))
+        b_center = vec_radius * 0.7
+        b_radius = (radius - abs(b_center))
+        glBegin(GL_TRIANGLE_FAN)
+        glColor3f(0.0 / 255, 0.0 / 255, 0.0 / 255)
+        glVertex2f(b_center.x + center.x, b_center.y + center.y)
+        for i in range(n + 1):
+            rx = b_center.x + center.x + b_radius * np.cos(d_theta * i)
+            ry = b_center.y + center.y + b_radius * np.sin(d_theta * i)
+            glVertex2f(rx, ry)
+        glEnd()
+
+        glBegin(GL_TRIANGLES)
+        glColor3f(255 / 255, 165.0 / 255, 0.0 / 255)
+        glVertex2f(center.x + vec_radius.x * 0.7, center.y + vec_radius.y * 0.7)
+        glVertex2f(upper.x, center.y + vec_radius.y)
+        glVertex2f(center.x + vec_radius.x, upper.y)
         glEnd()
 
     def update(self):

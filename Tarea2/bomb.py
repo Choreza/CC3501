@@ -91,11 +91,56 @@ class Bomb(Figure):
             glVertex2f(rx, ry)
         glEnd()
 
-        glBegin(GL_TRIANGLES)
+        alpha = 0.25 * np.pi
+        vec_radius = Vector(radius * np.cos(alpha), radius * np.sin(alpha))
+        b_center = vec_radius * 0.7
+        b_radius = 0.8 * (radius - abs(b_center))
+        glBegin(GL_TRIANGLE_FAN)
+        glColor3f(10.0 / 255, 10.0 / 255, 10.0 / 255)
+        glVertex2f(b_center.x + center.x, b_center.y + center.y)
+        for i in range(n + 1):
+            rx = b_center.x + center.x + b_radius * np.cos(d_theta * i)
+            ry = b_center.y + center.y + b_radius * np.sin(d_theta * i)
+            glVertex2f(rx, ry)
+        glEnd()
+
+        alpha = 0.25 * np.pi
+        vec_radius = Vector(radius * np.cos(alpha), radius * np.sin(alpha))
+        b_center = vec_radius * 0.7
+        b_radius = 0.5*(radius - abs(b_center))
+        glBegin(GL_TRIANGLE_FAN)
+        glColor3f(20.0 / 255, 20.0 / 255, 20.0 / 255)
+        glVertex2f(b_center.x + center.x, b_center.y + center.y)
+        for i in range(n + 1):
+            rx = b_center.x + center.x + b_radius * np.cos(d_theta * i)
+            ry = b_center.y + center.y + b_radius * np.sin(d_theta * i)
+            glVertex2f(rx, ry)
+        glEnd()
+
+        glLineWidth(5.0)
+        glBegin(GL_LINES)
+        glColor3f(255 / 255, 69.0 / 255, 0.0 / 255)
+        glVertex2f(center.x + vec_radius.x * 0.7, center.y + vec_radius.y * 0.7)
+        glVertex2f(upper.x, upper.y)
+
         glColor3f(255 / 255, 165.0 / 255, 0.0 / 255)
         glVertex2f(center.x + vec_radius.x * 0.7, center.y + vec_radius.y * 0.7)
-        glVertex2f(upper.x, center.y + vec_radius.y)
-        glVertex2f(center.x + vec_radius.x, upper.y)
+        glVertex2f(upper.x * 0.95, upper.y * 0.95)
+
+        glColor3f(180.0 / 255, 180.0 / 255, 180.0 / 255)
+        glVertex2f(center.x + vec_radius.x * 0.7, center.y + vec_radius.y * 0.7)
+        glVertex2f(upper.x * 0.9, upper.y * 0.9)
+
+        glEnd()
+
+        glLineWidth(2.0)
+        glBegin(GL_LINES)
+        glColor3f(20.0 / 255, 20.0 / 255, 20.0 / 255)
+        glVertex2f(center.x + vec_radius.x * 0.7, center.y + vec_radius.y * 0.7)
+        glVertex2f(center.x + vec_radius.x * 0.9, center.y + vec_radius.y * 0.7)
+
+        glVertex2f(center.x + vec_radius.x * 0.7, center.y + vec_radius.y * 0.6)
+        glVertex2f(center.x + vec_radius.x * 0.9, center.y + vec_radius.y * 0.7)
         glEnd()
 
     def update(self):

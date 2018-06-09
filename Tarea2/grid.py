@@ -63,16 +63,43 @@ class Grid(Figure):
         return real_blocks
 
     def figure(self):
-        glBegin(GL_QUADS)
-
-        glColor3f(80 / 255, 80 / 255, 80 / 255)
-
         blocks = self.scale_resolution(self.physics.blocks['sblock'])
         for block in blocks:
+            x_length = block.sup.x - block.inf.x
+            y_length = block.sup.y - block.inf.y
+
+            glBegin(GL_QUADS)
+
+            glColor3f(80 / 255, 80 / 255, 80 / 255)
             glVertex2f(block.inf.x, block.inf.y)
             glVertex2f(block.sup.x, block.inf.y)
             glVertex2f(block.sup.x, block.sup.y)
             glVertex2f(block.inf.x, block.sup.y)
 
-        glEnd()
+            glColor3f(50 / 255, 50 / 255, 50 / 255)
+            glVertex2f(block.inf.x, block.inf.y)
+            glVertex2f(block.inf.x + 0.15 * x_length, block.inf.y + 0.15 * y_length)
+            glVertex2f(block.inf.x + 0.15 * x_length, block.inf.y + 0.85 * y_length)
+            glVertex2f(block.inf.x, block.inf.y + y_length)
+            glVertex2f(block.inf.x, block.inf.y)
 
+            glColor3f(50 / 255, 50 / 255, 50 / 255)
+            glVertex2f(block.sup.x, block.inf.y)
+            glVertex2f(block.inf.x + 0.85 * x_length, block.inf.y + 0.15 * y_length)
+            glVertex2f(block.inf.x + 0.15 * x_length, block.inf.y + 0.15 * y_length)
+            glVertex2f(block.inf.x, block.inf.y)
+
+            glEnd()
+
+            glBegin(GL_QUADS)
+            glColor3f(100 / 255, 100 / 255, 100 / 255)
+            glVertex2f(block.sup.x, block.inf.y)
+            glVertex2f(block.sup.x, block.sup.y)
+            glVertex2f(block.inf.x + 0.85 * x_length, block.inf.y + 0.85 * y_length)
+            glVertex2f(block.inf.x + 0.85 * x_length, block.inf.y + 0.15 * y_length)
+
+            glVertex2f(block.inf.x + 0.85 * x_length, block.inf.y + 0.85 * y_length)
+            glVertex2f(block.sup.x, block.sup.y)
+            glVertex2f(block.inf.x, block.sup.y)
+            glVertex2f(block.inf.x + 0.15 * x_length, block.inf.y + 0.85 * y_length)
+            glEnd()

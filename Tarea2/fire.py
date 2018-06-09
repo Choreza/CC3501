@@ -108,14 +108,10 @@ class Fire(Figure):
             if block.inf.x > self.rects[0].inf.x:
                 right += 1
 
-        print(top, bot, right, left)
-
         lower = self.physics.scl_coord_res(self.rects[0].inf)
         upper = self.physics.scl_coord_res(self.rects[0].sup)
         upper += lower * -1
         lower += lower * -1
-
-        length = upper.x
 
         glBegin(GL_QUADS)
         glColor3f(255 / 255, 69.0 / 255, 0.0 / 255)

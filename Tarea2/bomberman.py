@@ -24,6 +24,7 @@ class Bomberman(Figure):
         self.steps = self.max_steps
 
         self.fps = fps
+        self.timeout = 2 * fps
 
         self.rpos = rpos
         self.rects = list()
@@ -63,6 +64,7 @@ class Bomberman(Figure):
         if not self.is_moving():
             self.check_powerups()
             self.check_fires()
+            self.check_enemies()
             if is_update:
                 return
 
@@ -89,9 +91,13 @@ class Bomberman(Figure):
         return self.steps < self.max_steps
 
     def is_dead(self):
-        is_dead = self.killer != None
-        is_dead = is_dead and not(self.killer in self.pjs.fires)
-        return is_dead
+        if self.killer:
+            if self.killer.stype == 'fire' and not (self.killer in self.pjs.fires):
+                return True
+            elif self.killer.stype == 'enemy' and self.timeout == 0:
+                return True
+        else:
+            return False
 
     def init_blocks(self):
         length = self.physics.len_blocks
@@ -139,6 +145,13 @@ class Bomberman(Figure):
                     return
         return
 
+    def check_enemies(self):
+        for enemy in self.pjs.enemies:
+            for block in enemy.rects:
+                if block.overlap(self.rects[0]):
+                    self.killer = enemy
+                    return
+
     def eat(self, powerup):
         powerup.consume_by(self)
 
@@ -149,7 +162,13 @@ class Bomberman(Figure):
                 self.physics.blocks[self.stype].remove(block)
 
     def update(self):
-        if self.killer and not(self.killer in self.pjs.fires):
-            self.die()
+        if self.killer:
+            if self.killer.stype == 'fire' and not(self.killer in self.pjs.fires):
+                self.die()
+            elif self.killer.stype == 'enemy':
+                if self.timeout == 0:
+                    self.die()
+                else:
+                    self.timeout -= 1
         else:
             self.move(self.direction, is_update=True)

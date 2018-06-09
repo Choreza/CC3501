@@ -21,7 +21,6 @@ class Physics:
 
         self.height = rows * len_blocks
         self.width = cols * len_blocks
-        print('height and witdth', self.height, self.width)
 
         self.real_height = rheight
         self.real_width = rwidth

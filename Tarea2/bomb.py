@@ -3,6 +3,7 @@ from cc3501utils.vector import Vector
 from OpenGL.GL import *
 from rectangle import Rectangle
 from fire import Fire
+import numpy as np
 
 
 class Bomb(Figure):
@@ -38,7 +39,7 @@ class Bomb(Figure):
         s.pjs.fires.append(Fire(s.pjs, s.radius, s.fps, s.rpos))
 
     def figure(self):
-        glBegin(GL_QUADS)
+        glBegin(GL_TRIANGLE_FAN)
         glColor3f(0 / 255, 0 / 255, 0 / 255)
 
         lower = self.physics.scl_coord_res(self.rects[0].inf)
@@ -47,11 +48,13 @@ class Bomb(Figure):
         upper += lower * -1
         lower += lower * -1
 
-        glVertex2f(lower.x, lower.y)
-        glVertex2f(lower.x, upper.y)
-        glVertex2f(upper.x, upper.y)
-        glVertex2f(upper.x, lower.y)
-
+        cx = upper.x/2.0
+        cy = upper.y/2.0
+        r = cx
+        delta = 2 * np.pi / 20
+        glVertex2f(cx, cy)
+        for i in range(21):
+            glVertex2f(cx + r * np.cos(i * delta), cy + r * np.sin(i * delta))
         glEnd()
 
     def update(self):

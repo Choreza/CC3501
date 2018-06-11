@@ -2,6 +2,7 @@ from cc3501utils.vector import Vector
 from cc3501utils.figure import Figure
 from OpenGL.GL import *
 from bomb import Bomb
+import numpy as np
 from rectangle import Rectangle
 
 
@@ -106,20 +107,167 @@ class Bomberman(Figure):
         self.physics.add_block(rect, 'bomberman')
 
     def figure(self):
-        glBegin(GL_QUADS)
-        glColor3f(255 / 255, 0 / 255, 0 / 255)
-
         lower = self.physics.scl_coord_res(self.rects[0].inf)
         upper = self.physics.scl_coord_res(self.rects[0].sup)
 
         upper += lower * -1
         lower += lower * -1
 
-        glVertex2f(lower.x, lower.y)
-        glVertex2f(lower.x, upper.y)
-        glVertex2f(upper.x, upper.y)
-        glVertex2f(upper.x, lower.y)
+        # Legs
+        glBegin(GL_QUADS)
+        glColor3f(255.0 / 255, 255.0 / 255, 255.0 / 255)
+        glVertex2f(0.60 * upper.x, 0.35 * upper.y)
+        glVertex2f(0.78 * upper.x, 0.35 * upper.y)
+        glVertex2f(0.78 * upper.x, 0.00 * upper.y)
+        glVertex2f(0.60 * upper.x, 0.00 * upper.y)
 
+        glVertex2f(0.40 * upper.x, 0.35 * upper.y)
+        glVertex2f(0.22 * upper.x, 0.35 * upper.y)
+        glVertex2f(0.22 * upper.x, 0.00 * upper.y)
+        glVertex2f(0.40 * upper.x, 0.00 * upper.y)
+
+        # Foots
+        glColor3f(255.0 / 255, 0.0 / 255, 255.0 / 255)
+        glVertex2f(0.60 * upper.x, 0.15 * upper.y)
+        glVertex2f(0.78 * upper.x, 0.15 * upper.y)
+        glVertex2f(0.78 * upper.x, 0.00 * upper.y)
+        glVertex2f(0.60 * upper.x, 0.00 * upper.y)
+
+        glVertex2f(0.40 * upper.x, 0.15 * upper.y)
+        glVertex2f(0.22 * upper.x, 0.15 * upper.y)
+        glVertex2f(0.22 * upper.x, 0.00 * upper.y)
+        glVertex2f(0.40 * upper.x, 0.00 * upper.y)
+        glEnd()
+
+        # Torso
+        center = upper / 2
+        radius = 0.6 * center.x
+
+        n = 30
+        d_theta = 2 * np.pi / n
+        glBegin(GL_TRIANGLE_FAN)
+        glColor3f(0.0 / 255, 0 / 255, 255.0 / 255)
+        glVertex2f(center.x, center.y)
+        for i in range(n + 1):
+            rx = center.x + 0.95 * radius * np.cos(i * d_theta)
+            ry = center.y + radius * np.sin(i * d_theta)
+            glVertex2f(rx, ry)
+        glEnd()
+
+        # Arms
+        glBegin(GL_QUADS)
+        glColor3f(255.0 / 255, 255.0 / 255, 255.0 / 255)
+        glVertex2f(0.78 * upper.x, 0.65 * upper.y)
+        glVertex2f(0.90 * upper.x, 0.65 * upper.y)
+        glVertex2f(0.90 * upper.x, 0.30 * upper.y)
+        glVertex2f(0.78 * upper.x, 0.30 * upper.y)
+
+        glVertex2f(0.22 * upper.x, 0.65 * upper.y)
+        glVertex2f(0.10 * upper.x, 0.65 * upper.y)
+        glVertex2f(0.10 * upper.x, 0.30 * upper.y)
+        glVertex2f(0.22 * upper.x, 0.30 * upper.y)
+
+        # Hands
+        glColor3f(255.0 / 255, 0.0 / 255, 255.0 / 255)
+        glVertex2f(0.78 * upper.x, 0.42 * upper.y)
+        glVertex2f(0.90 * upper.x, 0.42 * upper.y)
+        glVertex2f(0.90 * upper.x, 0.30 * upper.y)
+        glVertex2f(0.78 * upper.x, 0.30 * upper.y)
+
+        glVertex2f(0.22 * upper.x, 0.42 * upper.y)
+        glVertex2f(0.10 * upper.x, 0.42 * upper.y)
+        glVertex2f(0.10 * upper.x, 0.30 * upper.y)
+        glVertex2f(0.22 * upper.x, 0.30 * upper.y)
+
+        # Belt
+        glColor3f(0.0 / 255, 0.0 / 255, 0.0 / 255)
+        glVertex2f(0.25 * upper.x, 0.40 * upper.y)
+        glVertex2f(0.25 * upper.x, 0.45 * upper.y)
+        glVertex2f(0.75 * upper.x, 0.45 * upper.y)
+        glVertex2f(0.75 * upper.x, 0.40 * upper.y)
+
+        glColor3f(255.0 / 255, 255.0 / 255, 0.0 / 255)
+        glVertex2f(0.45 * upper.x, 0.40 * upper.y)
+        glVertex2f(0.45 * upper.x, 0.45 * upper.y)
+        glVertex2f(0.55 * upper.x, 0.45 * upper.y)
+        glVertex2f(0.55 * upper.x, 0.40 * upper.y)
+        glEnd()
+
+        # Bonnet
+
+        center = upper / 2
+        radius = 0.2 * center.x
+        center += Vector(0, 0.9 * upper.y)
+
+        n = 30
+        d_theta = 2 * np.pi / n
+        glBegin(GL_TRIANGLE_FAN)
+        glColor3f(255.0 / 255, 0.0 / 255, 255.0 / 255)
+        glVertex2f(center.x, center.y)
+        for i in range(n + 1):
+            rx = center.x + radius * np.cos(i * d_theta)
+            ry = center.y + radius * np.sin(i * d_theta)
+            glVertex2f(rx, ry)
+        glEnd()
+
+
+        # Head
+        center = upper / 2
+        radius = 0.9 * center.x
+        center += Vector(0, upper.y/2)
+
+        n = 30
+        d_theta = 2 * np.pi / n
+        glBegin(GL_TRIANGLE_FAN)
+        glColor3f(255.0 / 255, 255.0 / 255, 255.0 / 255)
+        glVertex2f(center.x, center.y)
+        for i in range(n + 1):
+            rx = center.x + radius * np.cos(i * d_theta)
+            ry = center.y + 0.95 * radius * np.sin(i * d_theta)
+            glVertex2f(rx, ry)
+        glEnd()
+
+        glBegin(GL_QUADS)
+        # Skin
+        glColor3f(255.0 / 255, 173.0 / 255, 96.0 / 255)
+        glVertex2f(0.82 * upper.x, 0.70 * upper.y)
+        glVertex2f(0.82 * upper.x, 1.00 * upper.y)
+        glVertex2f(0.18 * upper.x, 1.00 * upper.y)
+        glVertex2f(0.18 * upper.x, 0.70 * upper.y)
+
+        # Mask
+        glColor3f(255.0 / 255, 0.0 / 255, 0.0 / 255)
+        glVertex2f(0.77 * upper.x, 0.70 * upper.y)
+        glVertex2f(0.77 * upper.x, 1.00 * upper.y)
+        glVertex2f(0.82 * upper.x, 1.00 * upper.y)
+        glVertex2f(0.82 * upper.x, 0.70 * upper.y)
+
+        glVertex2f(0.25 * upper.x, 0.70 * upper.y)
+        glVertex2f(0.25 * upper.x, 1.00 * upper.y)
+        glVertex2f(0.18 * upper.x, 1.00 * upper.y)
+        glVertex2f(0.18 * upper.x, 0.70 * upper.y)
+
+        glVertex2f(0.77 * upper.x, 0.70 * upper.y)
+        glVertex2f(0.77 * upper.x, 0.62 * upper.y)
+        glVertex2f(0.25 * upper.x, 0.62 * upper.y)
+        glVertex2f(0.25 * upper.x, 0.70 * upper.y)
+
+        glVertex2f(0.77 * upper.x, 1.08 * upper.y)
+        glVertex2f(0.77 * upper.x, 1.00 * upper.y)
+        glVertex2f(0.25 * upper.x, 1.00 * upper.y)
+        glVertex2f(0.25 * upper.x, 1.08 * upper.y)
+
+        # Eyes
+        glColor3f(0.0 / 255, 0.0 / 255, 0.0 / 255)
+        glVertex2f(0.60 * upper.x, 0.70 * upper.y)
+        glVertex2f(0.60 * upper.x, 1.00 * upper.y)
+        glVertex2f(0.66 * upper.x, 1.00 * upper.y)
+        glVertex2f(0.66 * upper.x, 0.70 * upper.y)
+
+        glVertex2f(0.35 * upper.x, 0.70 * upper.y)
+        glVertex2f(0.35 * upper.x, 1.00 * upper.y)
+        glVertex2f(0.40 * upper.x, 1.00 * upper.y)
+        glVertex2f(0.40 * upper.x, 0.70 * upper.y)
         glEnd()
 
     def clear_radius(self, radius):

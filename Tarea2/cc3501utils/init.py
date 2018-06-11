@@ -21,7 +21,7 @@ def init(ancho, alto, titulo):
     glLoadIdentity()
 
     # definir variables de opengl
-    glClearColor(255.0, 255.0, 255.0, 255.0)  # color del fondo
+    glClearColor(46/255.0, 139/255.0, 47/255.0, 255.0)  # color del fondo
     glShadeModel(GL_SMOOTH)
     glClearDepth(1.0)
     # glDisable(GL_DEPTH_TEST)

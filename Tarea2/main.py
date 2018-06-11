@@ -16,6 +16,7 @@ from bomberman import Bomberman
 from powerup import PowerUp
 from dblock import DBlock
 from enemy import Enemy
+import os
 #####################################################################
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'  # centrar pantalla
@@ -56,6 +57,8 @@ def main():
     exit = Exit(pjs)
     pjs.add_exit(exit)
 
+    pygame.mixer.music.load(os.getcwd() + '/audio/04Level1.mp3')
+    pygame.mixer.music.play()
     run = True
     while run:
         for event in pygame.event.get():

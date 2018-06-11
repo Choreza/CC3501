@@ -9,6 +9,7 @@ from pygame.locals import *
 def init(ancho, alto, titulo):
     # inicializar pygame
     pygame.init()
+    pygame.mixer.init()
     pygame.display.set_mode((ancho, alto), OPENGL | DOUBLEBUF)
     pygame.display.set_caption(titulo)
 

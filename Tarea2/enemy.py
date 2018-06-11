@@ -3,6 +3,7 @@ from cc3501utils.figure import Figure
 from OpenGL.GL import *
 import random
 from rectangle import Rectangle
+import numpy as np
 
 
 class Enemy(Figure):
@@ -28,6 +29,7 @@ class Enemy(Figure):
         self.rects = list()
         self.init_blocks()
         self.pos = self.physics.scl_coord_res(self.rpos)
+        self.skin = random.randint(0, 1)
         super().__init__(self.pos, (1.0, 1.0, 1.0))
 
     def move(self, direction, is_update=False):
@@ -83,21 +85,151 @@ class Enemy(Figure):
         self.physics.add_block(rect, self.stype)
 
     def figure(self):
-        glBegin(GL_QUADS)
-        glColor3f(255 / 255, 0 / 255, 0 / 255)
-
         lower = self.physics.scl_coord_res(self.rects[0].inf)
         upper = self.physics.scl_coord_res(self.rects[0].sup)
 
         upper += lower * -1
         lower += lower * -1
 
-        glVertex2f(lower.x, lower.y)
-        glVertex2f(lower.x, upper.y)
-        glVertex2f(upper.x, upper.y)
-        glVertex2f(upper.x, lower.y)
+        center = upper / 2
+        radius = center.x
 
-        glEnd()
+        if self.skin == 0:
+            n = 30
+            d_theta = 2 * np.pi / n
+            glBegin(GL_TRIANGLE_FAN)
+            glColor3f(204.0 / 255, 0.0 / 255, 204.0 / 255)
+            glVertex2f(center.x, center.y)
+            for i in range(n + 1):
+                rx = center.x + radius * np.cos(d_theta * i)
+                ry = 1.5 * center.y + 0.8 * radius * np.sin(d_theta * i)
+                glVertex2f(rx, ry)
+            glEnd()
+
+            glBegin(GL_TRIANGLES)
+            glColor3f(204.0 / 255, 204.0 / 255, 0.0 / 255)
+
+            glVertex2f(center.x - radius, 1.3 * center.y)
+            glVertex2f(center.x + radius, 1.3 * center.y)
+            glVertex2f(center.x, lower.y)
+
+            glEnd()
+
+            glBegin(GL_QUADS)
+            glColor3f(255 / 255, 255.0 / 255, 255.0 / 255)
+
+            glVertex2f(1.0 * center.x, 1.9 * center.y)
+            glVertex2f(1.0 * center.x, 1.5 * center.y)
+            glVertex2f(1.2 * center.x, 1.5 * center.y)
+            glVertex2f(1.2 * center.x, 1.9 * center.y)
+
+            glVertex2f(0.9 * center.x, 1.9 * center.y)
+            glVertex2f(0.9 * center.x, 1.5 * center.y)
+            glVertex2f(0.7 * center.x, 1.5 * center.y)
+            glVertex2f(0.7 * center.x, 1.9 * center.y)
+
+            glColor3f(0.0 / 255, 0.0 / 255, 0.0 / 255)
+
+            glVertex2f(1.0 * center.x, 1.8 * center.y)
+            glVertex2f(1.0 * center.x, 1.5 * center.y)
+            glVertex2f(1.1 * center.x, 1.5 * center.y)
+            glVertex2f(1.1 * center.x, 1.8 * center.y)
+
+            glVertex2f(0.75 * center.x, 1.8 * center.y)
+            glVertex2f(0.75 * center.x, 1.5 * center.y)
+            glVertex2f(0.70 * center.x, 1.5 * center.y)
+            glVertex2f(0.70 * center.x, 1.8 * center.y)
+
+            glEnd()
+
+            glBegin(GL_LINES)
+            glVertex2f(0.7 * center.x, 1.1 * center.y)
+            glVertex2f(1.2 * center.x, 1.1 * center.y)
+
+            glVertex2f(1.2 * center.x, 1.1 * center.y)
+            glVertex2f(1.0 * center.x, 0.9 * center.y)
+
+            glVertex2f(0.7 * center.x, 1.1 * center.y)
+            glVertex2f(0.9 * center.x, 0.9 * center.y)
+
+            glVertex2f(1.0 * center.x, 0.9 * center.y)
+            glVertex2f(0.9 * center.x, 0.9 * center.y)
+            glEnd()
+        else:
+            center = upper / 2
+            radius = 0.8 * center.x
+
+            # Fire Head
+            n = 30
+            d_theta = 2 * np.pi / n
+            glBegin(GL_TRIANGLE_FAN)
+            glColor3f(255 / 255, 0.0 / 255, 0.0 / 255)
+            glVertex2f(center.x, center.y)
+            for i in range(n + 1):
+                rx = center.x + radius * np.cos(d_theta * i)
+                ry = 0.9 * center.y + radius * np.sin(d_theta * i)
+                glVertex2f(rx, ry)
+            glEnd()
+
+            # Fire hair
+            glBegin(GL_TRIANGLES)
+
+            glVertex2f(center.x, center.y)
+            glVertex2f(center.x + radius, center.y)
+            glVertex2f(center.x + radius, center.y + radius * 1.2)
+
+            glVertex2f(0.7 * center.x, center.y)
+            glVertex2f(0.7 * center.x + radius, center.y)
+            glVertex2f(0.7 * center.x + radius, center.y + radius * 1.2)
+
+            glVertex2f(0.4 * center.x, center.y)
+            glVertex2f(0.4 * center.x + radius, center.y)
+            glVertex2f(0.4 * center.x + radius, center.y + radius * 1.2)
+
+            glEnd()
+
+            # Fire eyes
+            glBegin(GL_QUADS)
+            glColor3f(255 / 255, 255.0 / 255, 255.0 / 255)
+
+            glVertex2f(1.0 * center.x, 1.1 * center.y)
+            glVertex2f(1.0 * center.x, 0.7 * center.y)
+            glVertex2f(1.2 * center.x, 0.7 * center.y)
+            glVertex2f(1.2 * center.x, 1.1 * center.y)
+
+            glVertex2f(0.9 * center.x, 1.1 * center.y)
+            glVertex2f(0.9 * center.x, 0.7 * center.y)
+            glVertex2f(0.7 * center.x, 0.7 * center.y)
+            glVertex2f(0.7 * center.x, 1.1 * center.y)
+
+            glColor3f(0.0 / 255, 0.0 / 255, 0.0 / 255)
+
+            glVertex2f(1.0 * center.x, 1.0 * center.y)
+            glVertex2f(1.0 * center.x, 0.7 * center.y)
+            glVertex2f(1.1 * center.x, 0.7 * center.y)
+            glVertex2f(1.1 * center.x, 1.0 * center.y)
+
+            glVertex2f(0.75 * center.x, 1.0 * center.y)
+            glVertex2f(0.75 * center.x, 0.7 * center.y)
+            glVertex2f(0.7 * center.x, 0.7 * center.y)
+            glVertex2f(0.7 * center.x, 1.0 * center.y)
+
+            glEnd()
+
+            # Fire mouth
+            glBegin(GL_LINES)
+            glVertex2f(0.7 * center.x, 0.6 * center.y)
+            glVertex2f(1.2 * center.x, 0.6 * center.y)
+
+            glVertex2f(1.2 * center.x, 0.6 * center.y)
+            glVertex2f(1.0 * center.x, 0.4 * center.y)
+
+            glVertex2f(0.7 * center.x, 0.6 * center.y)
+            glVertex2f(0.9 * center.x, 0.4 * center.y)
+
+            glVertex2f(1.0 * center.x, 0.4 * center.y)
+            glVertex2f(0.9 * center.x, 0.4 * center.y)
+            glEnd()
 
     def clear_radius(self, radius):
         s = self

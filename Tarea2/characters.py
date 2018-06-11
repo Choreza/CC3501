@@ -17,6 +17,7 @@ class Characters:
         self.fires = []
         self.powerups = []
         self.dblocks = []
+        self.exit = None
 
     def add_bomberman(self, bomberman):
         """
@@ -86,6 +87,9 @@ class Characters:
         """
         self.dblocks.append(dblock)
 
+    def add_exit(self, exit):
+        self.exit = exit
+
     def update(self):
         s = self
         for bomberman in s.bombermen:
@@ -102,3 +106,5 @@ class Characters:
 
         for bomb in s.bombs:
             bomb.update()
+
+        self.exit.update()

@@ -303,6 +303,9 @@ class Bomberman(Figure):
     def eat(self, powerup):
         powerup.consume_by(self)
 
+    def win(self):
+        self.die()
+
     def die(self):
         self.pjs.bombermen.remove(self)
         for block in self.physics.blocks[self.stype]:

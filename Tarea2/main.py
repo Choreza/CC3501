@@ -7,6 +7,7 @@
 import os
 from cc3501utils.init import *
 from cc3501utils.vector import Vector
+from exit import Exit
 from grid import Grid
 from physics import Physics
 from view import View
@@ -35,9 +36,9 @@ def main():
     grid = Grid(pjs)
     bomberman = Bomberman(pjs, fps, Vector(physics.len_blocks, physics.len_blocks))
 
-    nofenemies = 3
+    nofenemies = 5
     nofdblocks = 50
-    nofpowerup = 20
+    nofpowerup = 3
 
     pjs.add_bomberman(bomberman)
     pjs.set_grid(grid)
@@ -51,6 +52,9 @@ def main():
 
     for i in range(nofenemies):
         pjs.add_enemy(Enemy(pjs, fps))
+
+    exit = Exit(pjs)
+    pjs.add_exit(exit)
 
     run = True
     while run:

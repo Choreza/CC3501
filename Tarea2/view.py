@@ -7,6 +7,7 @@ class View:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         pjs.grid.draw()
+        pjs.exit.draw()
 
         for fire in pjs.fires:
             fire.draw()

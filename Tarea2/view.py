@@ -16,9 +16,9 @@ class View:
 
         for powerup in pjs.powerups:
             powerup.draw()
-
-        for dblock in pjs.dblocks:
-            dblock.draw()
+        #
+        # for dblock in pjs.dblocks:
+        #     dblock.draw()
 
         for bomberman in pjs.bombermen:
             bomberman.draw()

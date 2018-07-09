@@ -8,6 +8,11 @@ import numpy as np
 
 class PowerUp(Figure):
     def __init__(self, pjs, rgb=(1.0, 1.0, 1.0)):
+        """
+        DBlock builder.
+        :param pjs: The list of characters.
+        :param rgb: Not used. Required for the superclass builder.
+        """
         self.pjs = pjs
         self.physics = pjs.physics
 
@@ -25,6 +30,10 @@ class PowerUp(Figure):
         super().__init__(self.pos, rgb)
 
     def choose_pos(self):
+        """
+        Choose a random position at the grid.
+        :return:
+        """
         s = self
 
         availablepos = []
@@ -43,6 +52,10 @@ class PowerUp(Figure):
         s.rpos = availablepos[pos]
 
     def init_blocks(self):
+        """
+        Initializes the blocks at the discrete grid of blocks, representatives of the character.
+        :return:
+        """
         length = self.physics.len_blocks
         rect = Rectangle(Vector(self.rpos.x, self.rpos.y),
                          Vector(self.rpos.x + length, self.rpos.y + length))
@@ -50,15 +63,35 @@ class PowerUp(Figure):
         self.physics.add_block(rect, self.stype)
 
     def increase_bombs(self, character):
+        """
+        Increase in 1 the bombs of the given character.
+        :param character: Character to give one bomb.
+        :return:
+        """
         character.bombs += 1
 
     def increase_radius(self, character):
+        """
+        Increase in 1 the radius of the bombs of the given character.
+        :param character:
+        :return:
+        """
         character.bombradius += 1
 
     def increase_speed(self, character):
-        character.speed = min(character.max_steps/4, character.speed * 2)
+        """
+        Multiplies by 0.25 the speed of the given character.
+        :param character:
+        :return:
+        """
+        character.speed = min(character.max_steps/4, character.speed * 1.25)
 
     def consume_by(self, character):
+        """
+        Removes itself, if the given character calls this method. Giving the corresponding powerup to the character.
+        :param character: Character who calls this method.
+        :return:
+        """
         power = self.options[self.power]
         if power == 'bomb':
             self.increase_bombs(character)
@@ -73,6 +106,10 @@ class PowerUp(Figure):
         self.pjs.powerups.remove(self)
 
     def figure(self):
+        """
+        Draws the powerup
+        :return:
+        """
         lower = self.physics.scl_coord_res(self.rects[0].inf)
         upper = self.physics.scl_coord_res(self.rects[0].sup)
         upper += lower * -1

@@ -7,6 +7,11 @@ from rectangle import Rectangle
 
 class Exit(Figure):
     def __init__(self, pjs, rgb=(1.0, 1.0, 1.0)):
+        """
+        Exit's builder.
+        :param pjs: Vector representative of the initial position at the discrete grid.
+        :param rgb: Not used. Required for superclass builder.
+        """
         self.pjs = pjs
         self.physics = pjs.physics
         self.stype = 'exit'
@@ -20,6 +25,10 @@ class Exit(Figure):
         super().__init__(self.pos, rgb)
 
     def figure(self):
+        """
+        Draws the character.
+        :return:
+        """
         lower = self.physics.scl_coord_res(self.rects[0].inf)
         upper = self.physics.scl_coord_res(self.rects[0].sup)
         upper += lower * -1
@@ -57,6 +66,10 @@ class Exit(Figure):
         glEnd()
 
     def init_blocks(self):
+        """
+        Initializes the blocks at the discrete grid of blocks, representatives of the character.
+        :return:
+        """
         length = self.physics.len_blocks
         rect = Rectangle(Vector(self.rpos.x, self.rpos.y),
                          Vector(self.rpos.x + length, self.rpos.y + length))
@@ -64,6 +77,10 @@ class Exit(Figure):
         self.physics.add_block(rect, self.stype)
 
     def choose_rpos(self):
+        """
+        Choose a random position at the grid.
+        :return:
+        """
         s = self
 
         availablepos = []
@@ -83,6 +100,10 @@ class Exit(Figure):
         print(s.rpos)
 
     def update(self):
+        """
+        Checks if a bombermen is over this exit.
+        :return:
+        """
         if self.pjs.bombermen:
             if self.rects[0] == self.pjs.bombermen[0].rects[0] and not self.pjs.enemies:
                 self.pjs.bombermen[0].win()

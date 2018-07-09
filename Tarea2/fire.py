@@ -6,6 +6,14 @@ from rectangle import Rectangle
 
 class Fire(Figure):
     def __init__(self, pjs, radius, fps, pos, rgb=(1.0, 1.0, 1.0)):
+        """
+        Fire builder.
+        :param pjs: The list of characters.
+        :param radius: Integer representing the radius of the bomb.
+        :param fps: Integer representing the number of fps, used to calculate the time to explode.
+        :param pos: Vector representative of the position in the screen.
+        :param rgb: Not used. Required for the superclass builder.
+        """
         self.pjs = pjs
         self.physics = pjs.physics
         self.pos = pos
@@ -22,6 +30,10 @@ class Fire(Figure):
         super().__init__(self.pos, rgb)
 
     def init_blocks(self):
+        """
+        Initializes the blocks at the discrete grid of blocks, representatives of the character.
+        :return:
+        """
         s = self
 
         x = s.rpos.x
@@ -88,6 +100,10 @@ class Fire(Figure):
                     break
 
     def figure(self):
+        """
+        Draws the character in the screen.
+        :return:
+        """
         top = 0
         for block in self.rects:
             if block.inf.y > self.rects[0].inf.y:
@@ -213,12 +229,20 @@ class Fire(Figure):
             glEnd()
 
     def extinguish(self):
+        """
+        Removes this fire and all the interactions from the screen.
+        :return:
+        """
         s = self
         for b in s.rects:
             s.physics.blocks[s.stype].remove(b)
         s.pjs.fires.remove(s)
 
     def update(self):
+        """
+        Checks if it's time to extinguish.
+        :return:
+        """
         self.lifetime += 1
         if self.lifetime > self.timeout:
             self.extinguish()

@@ -30,6 +30,10 @@ class Physics:
         self.unavailable_blocks = list()
 
     def find_available_blocks(self):
+        """
+        Finds the available positions in the grid.
+        :return: List of rectangles representatives of the free positions.
+        """
         s = self
         length = self.len_blocks
 
@@ -151,6 +155,11 @@ class Physics:
         return True
 
     def scl_coord_res(self, coord):
+        """
+        Scale a coordinate according to the screen resolution.
+        :param coord:
+        :return:
+        """
         real_x = self.real_width
         real_y = self.real_height
 
@@ -163,6 +172,11 @@ class Physics:
         return Vector(coord.x * xf, coord.y * yf)
 
     def scl_block_res(self, blocks):
+        """
+        Scale the resolution for every block in the given list of blocks.
+        :param blocks: List of blocks
+        :return: List of blocks scaled according to the screen resolution.
+        """
         real_x = self.real_width
         real_y = self.real_height
 

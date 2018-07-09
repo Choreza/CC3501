@@ -6,6 +6,12 @@ from rectangle import Rectangle
 
 class Grid(Figure):
     def __init__(self, pjs, pos=Vector(0, 0), rgb=(1.0, 1.0, 1.0)):
+        """
+        Grid builder.
+        :param pjs: Characters object.
+        :param pos: Not used.
+        :param rgb: Not used.
+        """
         self.cols = pjs.physics.cols
         self.rows = pjs.physics.rows
 
@@ -63,6 +69,10 @@ class Grid(Figure):
         return real_blocks
 
     def figure(self):
+        """
+        Draws the grid in the screen.
+        :return:
+        """
         blocks = self.scale_resolution(self.physics.blocks['sblock'])
         for block in blocks:
             x_length = block.sup.x - block.inf.x

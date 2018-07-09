@@ -3,6 +3,11 @@ from OpenGL.GL import *
 
 class View:
     def draw(self, pjs):
+        """
+        Draw the characters, in the good order.
+        :param pjs:
+        :return:
+        """
         # limpia la pantalla
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 

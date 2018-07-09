@@ -88,9 +88,18 @@ class Characters:
         self.dblocks.append(dblock)
 
     def add_exit(self, exit):
+        """
+        Adds an exit object to the set of characters.
+        :param exit:
+        :return:
+        """
         self.exit = exit
 
     def update(self):
+        """
+        Update the different elements of the model. Is used by the view.
+        :return:
+        """
         s = self
         for bomberman in s.bombermen:
             bomberman.update()

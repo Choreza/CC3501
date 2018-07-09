@@ -7,6 +7,11 @@ from rectangle import Rectangle
 
 class DBlock(Figure):
     def __init__(self, pjs, rgb=(1.0, 1.0, 1.0)):
+        """
+        DBlock builder.
+        :param pjs: The list of characters.
+        :param rgb: Not used. Required for the superclass builder.
+        """
         self.pjs = pjs
         self.physics = pjs.physics
         self.fire = None
@@ -21,6 +26,10 @@ class DBlock(Figure):
         super().__init__(self.pos, rgb)
 
     def figure(self):
+        """
+        Draws the destructive block.
+        :return:
+        """
         lower = self.physics.scl_coord_res(self.rects[0].inf)
         upper = self.physics.scl_coord_res(self.rects[0].sup)
         upper += lower * -1
@@ -123,12 +132,20 @@ class DBlock(Figure):
         glEnd()
 
     def is_destroyed(self):
+        """
+        Checks if a Fire object touched this destructive block.
+        :return:
+        """
         if self.fire and not(self.fire in self.pjs.fires):
             return True
         else:
             return False
 
     def init_blocks(self):
+        """
+        Initializes the blocks at the discrete grid of blocks, representatives of the character.
+        :return:
+        """
         length = self.physics.len_blocks
         rect = Rectangle(Vector(self.rpos.x, self.rpos.y),
                          Vector(self.rpos.x + length, self.rpos.y + length))
@@ -136,6 +153,10 @@ class DBlock(Figure):
         self.physics.add_block(rect, self.stype)
 
     def choose_rpos(self):
+        """
+        Choose a random position at the grid.
+        :return:
+        """
         s = self
         blocks = s.physics.available_blocks
         block = blocks[random.randint(0, len(blocks) - 1)]
@@ -143,9 +164,18 @@ class DBlock(Figure):
         s.rpos = block.inf
 
     def explode(self, fire):
+        """
+        Set a Fire object to burn this destructive block.
+        :param fire:
+        :return:
+        """
         self.fire = fire
 
     def update(self):
+        """
+        Checks if the block must disappear from the screen or not.
+        :return:
+        """
         if self.is_destroyed():
             self.pjs.dblocks.remove(self)
             for rect in self.rects:

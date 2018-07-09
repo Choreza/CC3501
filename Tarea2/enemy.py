@@ -8,6 +8,11 @@ import numpy as np
 
 class Enemy(Figure):
     def __init__(self, pjs, fps):
+        """
+        Enemy builder
+        :param pjs: The list of characters.
+        :param fps: Integer representing the fps of the game.
+        """
         self.pjs = pjs
         self.physics = pjs.physics
 
@@ -18,7 +23,7 @@ class Enemy(Figure):
         self.directions = [Vector(0, -1), Vector(0, 1), Vector(1, 0), Vector(-1, 0)]
 
         # Speed must be smaller than max_steps
-        self.speed = self.physics.len_blocks/32
+        self.speed = self.physics.len_blocks/64
         self.max_steps = self.physics.len_blocks/2
         self.steps = self.max_steps
 
@@ -33,6 +38,13 @@ class Enemy(Figure):
         super().__init__(self.pos, (1.0, 1.0, 1.0))
 
     def move(self, direction, is_update=False):
+        """
+        Move the character to the given direction
+        :param direction: The direction to move
+        :param is_update: boolean representative of an update, if true, will ignore the orders given by the
+                          user until finish moving.
+        :return:
+        """
         s = self
 
         if not self.is_moving():
@@ -60,31 +72,56 @@ class Enemy(Figure):
             s.step_to(s.direction * speed)
 
     def step_to(self, direction):
+        """
+        Gives a step to the given direction.
+        :param direction:
+        :return:
+        """
         s = self
         s.steps += s.speed
         s.physics.move_bomberman(self, direction)
         s.update_pos()
 
     def update_pos(self):
+        """
+        Updates the character's position, at the discrete grid and the scaled version.
+        :return:
+        """
         s = self
         s.rpos = s.rects[0].inf
         s.pos = s.physics.scl_coord_res(s.rpos)
 
     def is_moving(self):
+        """
+        Checks if the character is moving, by looking the current steps.
+        :return: True if isn't moving, else False.
+        """
         return self.steps < self.max_steps
 
     def is_dead(self):
+        """
+        Checks if the character was burnt or touched by an enemy.
+        :return: If one of the conditions above is met, return True.
+        """
         is_dead = self.killer != None
         is_dead = is_dead and not(self.killer in self.pjs.fires)
         return is_dead
 
     def init_blocks(self):
+        """
+        Initializes the blocks at the discrete grid of blocks, representatives of the character.
+        :return:
+        """
         length = self.physics.len_blocks
         rect = Rectangle(self.rpos, self.rpos + Vector(length, length))
         self.rects.append(rect)
         self.physics.add_block(rect, self.stype)
 
     def figure(self):
+        """
+        Draws the character.
+        :return:
+        """
         lower = self.physics.scl_coord_res(self.rects[0].inf)
         upper = self.physics.scl_coord_res(self.rects[0].sup)
 
@@ -231,27 +268,11 @@ class Enemy(Figure):
             glVertex2f(0.9 * center.x, 0.4 * center.y)
             glEnd()
 
-    def clear_radius(self, radius):
-        s = self
-        length = self.physics.len_blocks
-
-        i = -radius * length
-        j = -radius * length
-
-        while i < radius * length:
-            while j < radius * length:
-                arect = Rectangle(s.rpos + Vector(i, j), s.rpos + Vector(i + length, j + length))
-                for dblock in s.pjs.dblocks:
-                    for rect in dblock.rects:
-                        if arect.overlap(rect):
-                            s.pjs.dblocks.remove(dblock)
-                            s.physics.blocks['dblock'].remove(rect)
-                            break
-                j += length
-            j = -radius * length
-            i += length
-
     def check_fires(self):
+        """
+        Checks if the character is burnt by a fire object.
+        :return:
+        """
         for fire in self.pjs.fires:
             for block in fire.rects:
                 if block.overlap(self.rects[0]):
@@ -259,16 +280,21 @@ class Enemy(Figure):
                     return
         return
 
-    def eat(self, powerup):
-        powerup.consume_by(self)
-
     def die(self):
+        """
+        Remove the character from the game.
+        :return:
+        """
         self.pjs.enemies.remove(self)
         for block in self.physics.blocks[self.stype]:
             if block == self.rects[0]:
                 self.physics.blocks[self.stype].remove(block)
 
     def choose_rpos(self):
+        """
+        Choose a random position at the grid.
+        :return:
+        """
         s = self
         blocks = s.physics.available_blocks
         block = blocks[random.randint(0, len(blocks) - 1)]
@@ -276,6 +302,11 @@ class Enemy(Figure):
         s.rpos = block.inf
 
     def update(self):
+        """
+        Checks the possibles ways to day or to win, executing the corresponding action. If the character doesn't
+        die or win, then moves.
+        :return:
+        """
         if self.killer and not(self.killer in self.pjs.fires):
             self.die()
         else:

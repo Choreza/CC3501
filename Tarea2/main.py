@@ -4,7 +4,6 @@
 # PyOpenGL 3.1.0
 # PyGame 1.9.3
 #####################################################################
-import os
 from cc3501utils.init import *
 from cc3501utils.vector import Vector
 from exit import Exit
@@ -23,13 +22,22 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'  # centrar pantalla
 
 
 def main():
+    # Length in pixels of the rectangles.
     rectlen = 50
+
+    # Set the screen dimensions in pixels.
     width = 15*rectlen
     height = 13*rectlen
+
+    # Initializes main classes.
     init(width, height, "Bomberman")
     view = View()
     clock = pygame.time.Clock()
+
+    # Set the fps of the game
     fps = 60
+
+    # Initialize model objects.
     pjs = Characters()
     physics = Physics(pjs, 15, 13, (1 << 11), width, height)
     pjs.set_physics(physics)
@@ -38,8 +46,8 @@ def main():
     bomberman = Bomberman(pjs, fps, Vector(physics.len_blocks, physics.len_blocks))
 
     nofenemies = 5
-    nofdblocks = 50
-    nofpowerup = 3
+    nofdblocks = 48
+    nofpowerup = 5
 
     pjs.add_bomberman(bomberman)
     pjs.set_grid(grid)
@@ -54,9 +62,10 @@ def main():
     for i in range(nofenemies):
         pjs.add_enemy(Enemy(pjs, fps))
 
-    exit = Exit(pjs)
-    pjs.add_exit(exit)
+    exitf = Exit(pjs)
+    pjs.add_exit(exitf)
 
+    # Load and play music
     pygame.mixer.music.load(os.getcwd() + '/audio/04Level1.mp3')
     pygame.mixer.music.play()
     run = True
@@ -75,15 +84,16 @@ def main():
                 bomberman.move(Vector(0, 1))
             if keys[K_DOWN]:
                 bomberman.move(Vector(0, -1))
-            if keys[K_SPACE]:
+            if keys[K_a]:
                 bomberman.put_bomb()
 
         pjs.update()
         view.draw(pjs)
         pygame.display.flip()  # actualizar pantalla
-        clock.tick(30)
+        clock.tick(fps)
 
     pygame.quit()
 
 
-main()
+if __name__ == "__main__":
+    main()

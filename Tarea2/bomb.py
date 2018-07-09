@@ -8,6 +8,15 @@ import numpy as np
 
 class Bomb(Figure):
     def __init__(self, bomberman, pjs, radius, fps, pos, rgb=(1.0, 1.0, 1.0)):
+        """
+        Bomb builder, receives the bomberman who instantiated this bomb.
+        :param bomberman: The bomberman who has instanciated this bomb.
+        :param pjs: The list of characters.
+        :param radius: Integer representing the radius of the bomb.
+        :param fps: Integer representing the number of fps, used to calculate the time to explode.
+        :param pos: Vector representative of the position in the screen.
+        :param rgb: Not used. Required for the superclass builder.
+        """
         self.pjs = pjs
         self.bomberman = bomberman
         self.physics = pjs.physics
@@ -25,6 +34,10 @@ class Bomb(Figure):
         super().__init__(self.pos, rgb)
 
     def init_blocks(self):
+        """
+        Initializes the list of blocks representatives of the bomb at the discrete grid.
+        :return:
+        """
         length = self.physics.len_blocks
         rect = Rectangle(Vector(self.rpos.x, self.rpos.y),
                          Vector(self.rpos.x + length, self.rpos.y + length))
@@ -32,6 +45,10 @@ class Bomb(Figure):
         self.physics.add_block(rect, self.stype)
 
     def explode(self):
+        """
+        Makes the bomb disappear, creating a Fire object at the current position.
+        :return:
+        """
         s = self
         s.pjs.bombs.remove(s)
         s.bomberman.bombs += 1
@@ -39,6 +56,10 @@ class Bomb(Figure):
         s.pjs.fires.append(Fire(s.pjs, s.radius, s.fps, s.rpos))
 
     def figure(self):
+        """
+        Draws the bomb.
+        :return:
+        """
         lower = self.physics.scl_coord_res(self.rects[0].inf)
         upper = self.physics.scl_coord_res(self.rects[0].sup)
 
@@ -144,6 +165,10 @@ class Bomb(Figure):
         glEnd()
 
     def update(self):
+        """
+        Checks if it's time to explode.
+        :return:
+        """
         self.lifetime += 1
         if self.lifetime >= self.timeout:
             self.explode()

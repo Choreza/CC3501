@@ -47,6 +47,7 @@ def main():
 
     nofenemies = 5
     nofdblocks = 48
+
     nofpowerup = 5
 
     pjs.add_bomberman(bomberman)
